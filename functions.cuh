@@ -143,7 +143,7 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 				cudaEventRecord(start, 0);
 
 				// cm = ith node
-				kernel1test1<<<32,32>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent);
+				kernel1test1<<<1024,1024>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent);
 
 				cudaDeviceSynchronize();
 
@@ -359,7 +359,7 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 
 				cudaEventRecord(start, 0);
 
-				kernel2test1<<<32,32>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent, cmarked);
+				kernel2test1<<<1024,1024>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent, cmarked);
 
 				cudaDeviceSynchronize();
 
@@ -588,7 +588,7 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 
 				cudaEventRecord(start, 0);
 
-				kernel3test1<<<32,32>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg);
+				kernel3test1<<<1024,1024>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg);
 
 				cudaDeviceSynchronize();
 
@@ -787,7 +787,7 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 
 				cudaEventRecord(start, 0);
 
-				kernel4test1<<<32,32>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cmarked);
+				kernel4test1<<<1024,1024>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cmarked);
 
 				cudaDeviceSynchronize();
 
@@ -1024,7 +1024,7 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 
 				cudaEventRecord(start, 0);
 
-				kernel3test1<<<32,32>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg);
+				kernel3test1<<<1024,1024>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg);
 
 				cudaDeviceSynchronize();
 
@@ -1253,7 +1253,7 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 
 				cudaEventRecord(start, 0);
 
-				kernel4test1<<<32,32>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cmarked);
+				kernel4test1<<<1024,1024>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cmarked);
 
 				cudaDeviceSynchronize();
 
@@ -1509,7 +1509,7 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 
 				cudaEventRecord(start, 0);
 
-				kernel1test1<<<32,32>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent);
+				kernel1test1<<<1024,1024>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent);
 
 				cudaDeviceSynchronize();
 
@@ -1749,7 +1749,7 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 
 				cudaEventRecord(start, 0);
 
-				kernel2test1<<<32,32>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent, cmarked);
+				kernel2test1<<<1024,1024>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent, cmarked);
 				cudaDeviceSynchronize();
 
 				cudaEventRecord(stop, 0);
