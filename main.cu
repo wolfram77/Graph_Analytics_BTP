@@ -8,11 +8,13 @@
 #include <map>
 #include <chrono>
 #include "functions.cuh"
+#include "measure.h"
 
 using namespace std;
 using namespace std::chrono;
 
 double total = 0.0;
+double totalcpu = 0.0;
 
 long long inc=0;
 
@@ -99,7 +101,7 @@ int main(int argc, char **argv) {
   while (ln[0] == '%');
 	istringstream ls(ln);
 
-	// cout << "Loading graph " << argv[1] << " ...\n";
+	cout << "Loading graph " << argv[1] << " ...\n";
 	long long n,m;
 	ls >> n >> n >> m;
 
@@ -121,7 +123,7 @@ int main(int argc, char **argv) {
 		s.insert(v);
 		edgess.push_back(make_pair(u,v));
 	}
-	// cout << "order: " << n << " size: " << m << " {}\n";
+	cout << "order: " << n << " size: " << m << " {}\n";
 	map<long long,long long> hash;
 	long long cnt=0;
 	for(auto k:s){
@@ -481,9 +483,11 @@ int main(int argc, char **argv) {
 			for(j=par[i];j<pivot;j++){
 				total += computeparalleli(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
 			}
-			for(j=pivot;j<par[i+1];j++){
-				computeranki(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
-			}
+			totalcpu += measureDuration([&]() {
+				for(j=pivot;j<par[i+1];j++){
+					computeranki(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
+				}
+			});
 		}
 	}
 
@@ -651,9 +655,11 @@ int main(int argc, char **argv) {
 			for(j=par[i];j<pivot;j++){
 				total += computeparallelid(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
 			}
-			for(j=pivot;j<par[i+1];j++){
-				computerankid(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
-			}
+			totalcpu += measureDuration([&]() {
+				for(j=pivot;j<par[i+1];j++){
+					computerankid(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
+				}
+			});
 		}
 	}
 
@@ -788,9 +794,11 @@ int main(int argc, char **argv) {
 			for(j=par[i];j<pivot;j++){
 				total += computeparallel(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
 			}
-			for(j=pivot;j<par[i+1];j++){
-				computerank(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial);
-			}
+			totalcpu += measureDuration([&]() {
+				for(j=pivot;j<par[i+1];j++){
+					computerank(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial);
+				}
+			});
 		}
 	}
 
@@ -923,9 +931,11 @@ int main(int argc, char **argv) {
 			for(j=par[i];j<pivot;j++){
 				total += computeparalleld(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
 			}
-			for(j=pivot;j<par[i+1];j++){
-				computerankd(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial);
-			}
+			totalcpu += measureDuration([&]() {
+				for(j=pivot;j<par[i+1];j++){
+					computerankd(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial);
+				}
+			});
 		}
 	}
 
@@ -1058,9 +1068,11 @@ int main(int argc, char **argv) {
 			for(j=par[i];j<pivot;j++){
 				total += computeparallelc(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial,levelz,redir,powers, n);
 			}
-			for(j=pivot;j<par[i+1];j++){
-				computerankc(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
-			}
+			totalcpu += measureDuration([&]() {
+				for(j=pivot;j<par[i+1];j++){
+					computerankc(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
+				}
+			});
 		}
 	}
 
@@ -1193,9 +1205,11 @@ int main(int argc, char **argv) {
 			for(j=par[i];j<pivot;j++){
 				total += computeparalleldc(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial,levelz,redir,powers, n);
 			}
-			for(j=pivot;j<par[i+1];j++){
-				computerankdc(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
-			}
+			totalcpu += measureDuration([&]() {
+				for(j=pivot;j<par[i+1];j++){
+					computerankdc(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
+				}
+			});
 		}
 	}
 
@@ -1372,9 +1386,11 @@ int main(int argc, char **argv) {
 			for(j=par[i];j<pivot;j++){
 				total += computeparallelic(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial,levelz,redir,powers, n);
 			}
-			for(j=pivot;j<par[i+1];j++){
-				computerankic(rcgraph, parent, left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
-			}
+			totalcpu += measureDuration([&]() {
+				for(j=pivot;j<par[i+1];j++){
+					computerankic(rcgraph, parent, left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
+				}
+			});
 		}
 	}
 
@@ -1546,9 +1562,11 @@ int main(int argc, char **argv) {
 			for(j=par[i];j<pivot;j++){
 				total += computeparallelidc(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial,levelz,redir,powers, n);
 			}
-			for(j=pivot;j<par[i+1];j++){
-				computerankidc(rcgraph, parent, left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
-			}
+			totalcpu += measureDuration([&]() {
+				for(j=pivot;j<par[i+1];j++){
+					computerankidc(rcgraph, parent, left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
+				}
+			});
 		}
 	}
 
@@ -1559,17 +1577,18 @@ int main(int argc, char **argv) {
 	for(i=0;i<n;i++){
 		rank[i]=rank[i]/sum;
 	}
-	// cout << "Ranks:\n";
+	cout << "Ranks:\n";
 	if (argc > 2) for(i=0;i<n;i++){
-		// cout << rank[i] << "\n";
+		cout << rank[i] << "\n";
 	}
-	// cout << "\n";
+	cout << "\n";
 	auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    // cout << "Time taken: "
+    cout << "Time taken: "
          << duration.count() / 1000.0 << " ms\n";
 
-    // cout << "kernel time: " << total << " ms\n\n";
+    cout << "Kernel time: " << total << " ms\n";
+    cout << "CPU time:    " << totalcpu << " ms\n\n";
     cudaFree(cstart);
     cudaFree(cend);
     cudaFree(corder);
