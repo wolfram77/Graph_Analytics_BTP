@@ -18,7 +18,7 @@
 	for component 2, for all the nodes which have incoming edges from component 0,
 	we will initialize that nodes with contribution of the node from which edge is coming
 */
-__global__ void kerneltest(long long *cstart, long long *cend, long long *cmemsz, long long *cmember, long long *crcw, 
+__global__ void kerneltest(long long *cstart, long long *cend, long long *cmemsz, long long *cmember, long long *crcw,
 	double *cinitial, double *crank, long long *rcwgraph, long long *outdeg, long long *corder, long long *ctemp, long long *ctempg)
 {
 	// w = Component number
@@ -41,7 +41,7 @@ __global__ void kerneltest(long long *cstart, long long *cend, long long *cmemsz
 			long long node = cmember[ctemp[w]+j];
 			// k is the index of node from which node have incoming edge in the graph rcwgrah
 			long long k = blockIdx.y*blockDim.y+threadIdx.y;
-			// size1 = size of node's cross edge list 
+			// size1 = size of node's cross edge list
 			long long size1 = crcw[node];
 			// num_threads_y = max threads in y dimension
 			long long num_threads_y = blockDim.y * gridDim.y;
@@ -60,7 +60,7 @@ __global__ void kerneltest(long long *cstart, long long *cend, long long *cmemsz
 // This function works same as above kerneltest function
 // One thing is changed
 // Component is fixed (cstart/w)
-__global__ void kerneltest1(long long *cstart, long long *cend, long long *cmemsz, long long *cmember, long long *crcw, 
+__global__ void kerneltest1(long long *cstart, long long *cend, long long *cmemsz, long long *cmember, long long *crcw,
 	double *cinitial, double *crank, long long *rcwgraph, long long *outdeg, long long *corder, long long *ctemp, long long *ctempg)
 {
 	long long w = (*cstart);
@@ -79,7 +79,7 @@ __global__ void kerneltest1(long long *cstart, long long *cend, long long *cmems
 }
 
 // cn = pivot (node is changing)
-__global__ void kernel1test(long long *cn, long long *csize, long long *cmem, long long *cgraph, 
+__global__ void kernel1test(long long *cn, long long *csize, long long *cmem, long long *cgraph,
 							long long *ctemp, double *ccurr, double *crank, long long *coutdeg, long long *cparent)
 {
 	// w = index of node
@@ -98,7 +98,7 @@ __global__ void kernel1test(long long *cn, long long *csize, long long *cmem, lo
 }
 
 // node is fixed
-__global__ void kernel1test1(long long *cn, long long *csize, long long *cmem, long long *cgraph, 
+__global__ void kernel1test1(long long *cn, long long *csize, long long *cmem, long long *cgraph,
 							long long *ctemp, double *ccurr, double *crank, long long *coutdeg, long long *cparent)
 {
 	// w = index of node
@@ -108,23 +108,23 @@ __global__ void kernel1test1(long long *cn, long long *csize, long long *cmem, l
 	long long j = blockIdx.x*blockDim.x + threadIdx.x;
 	long long num_threads_x = blockDim.x * gridDim.x;
 	for(;j<size;j+=num_threads_x){
-		// edge (u -> w) u = node 
+		// edge (u -> w) u = node
 		long long node = cgraph[ctemp[w]+j];
 		atomicAdd(&ccurr[w], crank[cparent[node]]/coutdeg[node]);
 	}
 }
 
-__global__ void kernel2test(long long *cn, long long *csize, long long *cmem, long long *cgraph, 
+__global__ void kernel2test(long long *cn, long long *csize, long long *cmem, long long *cgraph,
 							long long *ctemp, double *ccurr, double *crank, long long *coutdeg, long long *cparent, long long *cmarked)
 {
- 
+
 	long long w = blockIdx.x*blockDim.x + threadIdx.x;
 	long long num_threads_x = blockDim.x * gridDim.x;
 	for(;w<(*cn);w+=num_threads_x){
-		if(cmarked[w] != 0) continue; 
+		if(cmarked[w] != 0) continue;
 		long long size = csize[w];
 		long long j = blockIdx.y*blockDim.y + threadIdx.y;
-		long long num_threads_y = blockDim.y * gridDim.y;	
+		long long num_threads_y = blockDim.y * gridDim.y;
 		for(;j<size;j+=num_threads_y){
 			long long node = cgraph[ctemp[w]+j];
 			atomicAdd(&ccurr[w], crank[cparent[node]]/coutdeg[node]);
@@ -132,23 +132,23 @@ __global__ void kernel2test(long long *cn, long long *csize, long long *cmem, lo
 	}
 }
 
-__global__ void kernel2test1(long long *cn, long long *csize, long long *cmem, long long *cgraph, 
+__global__ void kernel2test1(long long *cn, long long *csize, long long *cmem, long long *cgraph,
 							long long *ctemp, double *ccurr, double *crank, long long *coutdeg, long long *cparent, long long *cmarked)
 {
- 
+
 	long long w = *cn;
 	if(cmarked[w] == 0){
 		long long size = csize[w];
 		long long j = blockIdx.y*blockDim.y + threadIdx.y;
-		long long num_threads_y = blockDim.y * gridDim.y;	
+		long long num_threads_y = blockDim.y * gridDim.y;
 		for(;j<size;j+=num_threads_y){
 			long long node = cgraph[ctemp[w]+j];
 			atomicAdd(&ccurr[w], crank[cparent[node]]/coutdeg[node]);
 		}
 	}
 }
- 
-__global__ void kernel3test(long long *cn, long long *csize, long long *cmem, long long *cgraph, 
+
+__global__ void kernel3test(long long *cn, long long *csize, long long *cmem, long long *cgraph,
 							long long *ctemp, double *ccurr, double *crank, long long *coutdeg)
 {
 	long long w = blockIdx.x*blockDim.x + threadIdx.x;
@@ -165,7 +165,7 @@ __global__ void kernel3test(long long *cn, long long *csize, long long *cmem, lo
 }
 
 
-__global__ void kernel3test1(long long *cn, long long *csize, long long *cmem, long long *cgraph, 
+__global__ void kernel3test1(long long *cn, long long *csize, long long *cmem, long long *cgraph,
 							long long *ctemp, double *ccurr, double *crank, long long *coutdeg)
 {
 	long long w = *cn;
@@ -177,8 +177,8 @@ __global__ void kernel3test1(long long *cn, long long *csize, long long *cmem, l
 		atomicAdd(&ccurr[w], crank[node]/coutdeg[node]);
 	}
 }
- 
-__global__ void kernel4test(long long *cn, long long *csize, long long *cmem, long long *cgraph, 
+
+__global__ void kernel4test(long long *cn, long long *csize, long long *cmem, long long *cgraph,
 							long long *ctemp, double *ccurr, double *crank, long long *coutdeg, long long *cmarked)
 {
 	long long w = blockIdx.x*blockDim.x + threadIdx.x;
@@ -186,7 +186,7 @@ __global__ void kernel4test(long long *cn, long long *csize, long long *cmem, lo
 	for(;w<(*cn);w+=num_threads_x){
 		if(cmarked[w] != 0) continue;
 		long long size = csize[w];
-		long long j = blockIdx.y*blockDim.y + threadIdx.y;	
+		long long j = blockIdx.y*blockDim.y + threadIdx.y;
 		long long num_threads_y = blockDim.y * gridDim.y;
 		for(;j<size;j+=num_threads_y){
 			long long node = cgraph[ctemp[w]+j];
@@ -195,13 +195,13 @@ __global__ void kernel4test(long long *cn, long long *csize, long long *cmem, lo
 	}
 }
 
-__global__ void kernel4test1(long long *cn, long long *csize, long long *cmem, long long *cgraph, 
+__global__ void kernel4test1(long long *cn, long long *csize, long long *cmem, long long *cgraph,
 							long long *ctemp, double *ccurr, double *crank, long long *coutdeg, long long *cmarked)
 {
 	long long w = *cn;
 	if(cmarked[w]==0){
 		long long size = csize[w];
-		long long j = blockIdx.y*blockDim.y + threadIdx.y;	
+		long long j = blockIdx.y*blockDim.y + threadIdx.y;
 		long long num_threads_y = blockDim.y * gridDim.y;
 		for(;j<size;j+=num_threads_y){
 			long long node = cgraph[ctemp[w]+j];
