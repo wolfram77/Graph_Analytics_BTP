@@ -658,7 +658,7 @@ void computerank(vector < vector < long long > > & graph,long long n,long long *
 				rank[mapit[i]]=curr[i];
 			}
 		}
-		cout << "computerank(): [" << iter << "] error: " << error << " thres: " << thres << "\n";
+		// cout << "computerank(): [" << iter << "] error: " << error << " thres: " << thres << "\n";
 	}while(error > thres );
 	curr.clear();
 }
@@ -1074,7 +1074,7 @@ void computerankc(vector < vector < long long > > & graph,long long n,long long 
 	cout << "computerankc()\n";
 	double damp=0.85;
 	double thres=1e-10;
-	long long i;
+	long long i, j;
 	vector < double > curr(n);
 	double error=0;
 	long long  iterations=0;
@@ -1316,7 +1316,7 @@ void computerankdc(vector < vector < long long > > & graph,long long n,long long
 	cout << "computerankdc()\n";
 	double damp=0.85;
 	double thres=1e-10;
-	long long i;
+	long long i, j;
 	vector < double > curr(n);
 	vector < double > prev(n,1.0/n);
 	double value=((1e-12)*10.0)/double ( n );
@@ -1564,7 +1564,7 @@ void computerankic(vector < vector < long long > > & graph,long long *parent,vec
 	cout << "computerankic()\n";
 	double damp=0.85;
 	double thres=1e-10;
-	long long i;
+	long long i, j;
 	vector < double > curr(n);
 	double error=0;
 	long long  iterations=0;
@@ -1817,7 +1817,7 @@ void computerankidc(vector < vector < long long > > & graph,long long *parent,ve
 	cout << "computerankidc()\n";
 	double damp=0.85;
 	double thres=1e-10;
-	long long i;
+	long long i, j;
 	vector < double > curr(n);
 	vector < double > prev(n,1.0/n);
 	double value=((1e-12)*10.0)/double ( n );
