@@ -99,7 +99,7 @@ int main(int argc, char **argv) {
   while (ln[0] == '%');
 	istringstream ls(ln);
 
-	cout << "Loading graph " << argv[1] << " ...\n";
+	// cout << "Loading graph " << argv[1] << " ...\n";
 	long long n,m;
 	ls >> n >> n >> m;
 
@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
 		s.insert(v);
 		edgess.push_back(make_pair(u,v));
 	}
-	cout << "order: " << n << " size: " << m << " {}\n";
+	// cout << "order: " << n << " size: " << m << " {}\n";
 	map<long long,long long> hash;
 	long long cnt=0;
 	for(auto k:s){
@@ -461,7 +461,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-1()\n";
+				// cout << "kerneltest-1()\n";
 				cudaEventRecord(start, 0);
 
 				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
@@ -631,7 +631,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-2()\n";
+				// cout << "kerneltest-2()\n";
 				cudaEventRecord(start, 0);
 
 				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
@@ -768,7 +768,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-3()\n";
+				// cout << "kerneltest-3()\n";
 				cudaEventRecord(start, 0);
 
 				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
@@ -902,7 +902,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-4()\n";
+				// cout << "kerneltest-4()\n";
 				cudaEventRecord(start, 0);
 
 				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
@@ -1037,7 +1037,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-5()\n";
+				// cout << "kerneltest-5()\n";
 				cudaEventRecord(start, 0);
 
 				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
@@ -1172,7 +1172,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-6()\n";
+				// cout << "kerneltest-6()\n";
 				cudaEventRecord(start, 0);
 
 				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
@@ -1351,7 +1351,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-7()\n";
+				// cout << "kerneltest-7()\n";
 				cudaEventRecord(start, 0);
 
 				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
@@ -1525,7 +1525,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-8()\n";
+				// cout << "kerneltest-8()\n";
 				cudaEventRecord(start, 0);
 
 				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
@@ -1559,17 +1559,17 @@ int main(int argc, char **argv) {
 	for(i=0;i<n;i++){
 		rank[i]=rank[i]/sum;
 	}
-	cout << "Ranks:\n";
+	// cout << "Ranks:\n";
 	if (argc > 2) for(i=0;i<n;i++){
-		cout << rank[i] << "\n";
+		// cout << rank[i] << "\n";
 	}
-	cout << "\n";
+	// cout << "\n";
 	auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken: "
+    // cout << "Time taken: "
          << duration.count() / 1000.0 << " ms\n";
 
-    cout << "kernel time: " << total << " ms\n\n";
+    // cout << "kernel time: " << total << " ms\n\n";
     cudaFree(cstart);
     cudaFree(cend);
     cudaFree(corder);

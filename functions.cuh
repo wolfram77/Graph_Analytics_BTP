@@ -3,7 +3,7 @@ using namespace std;
 
 float computeparalleli(vector<vector<long long>> &graph, long long *parent, vector<long long> left, long long n, long long *outdeg, vector<long long> &mapit, double *rank,double *initial, long long nn)
 {
-	cout << "computeparalleli()\n";
+	// cout << "computeparalleli()\n";
 	float total = 0.0;
 	long long i, iterations = 0;
 	double damp=0.85, thres=1e-10, error = 0;
@@ -162,7 +162,7 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 
 void computeranki(vector < vector < long long > > & graph, long long *parent,vector < long long > left,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial, long long nn)
 {
-	cout << "computeranki()\n";
+	// cout << "computeranki()\n";
 	double damp=0.85;
 	double thres=1e-10;
 	long long i,j;
@@ -198,7 +198,7 @@ void computeranki(vector < vector < long long > > & graph, long long *parent,vec
 
 float computeparallelid(vector < vector < long long > > & graph,long long *parent,vector < long long > & left,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial, long long nn)
 {
-	cout << "computeparallelid()\n";
+	// cout << "computeparallelid()\n";
 	float total = 0.0;
 	double thres=1e-10;
 	double dis=1e-12;
@@ -378,7 +378,7 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 
 void computerankid(vector < vector < long long > > & graph,long long *parent,vector < long long > & left, long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial, long long nn)
 {
-	cout << "computerankid()\n";
+	// cout << "computerankid()\n";
 	double damp = 0.85;
 	double thres=1e-10;
 	long long i,j;
@@ -431,7 +431,7 @@ void computerankid(vector < vector < long long > > & graph,long long *parent,vec
 
 float computeparallel(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial, long long nn)
 {
-	cout << "computeparallel()\n";
+	// cout << "computeparallel()\n";
 	float total = 0.0;
 	double damp=0.85;
 	double thres=1e-10;
@@ -588,7 +588,7 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 
 void computerank(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial)
 {
-	cout << "computerank()\n";
+	// cout << "computerank()\n";
 	double damp=0.85;
 	double thres=1e-10;
 	long long i,j, iter=0;
@@ -616,14 +616,14 @@ void computerank(vector < vector < long long > > & graph,long long n,long long *
 				rank[mapit[i]]=curr[i];
 			}
 		}
-		cout << "computerank(): [" << iter << "] error: " << error << " thres: " << thres << "\n";
+		// cout << "computerank(): [" << iter << "] error: " << error << " thres: " << thres << "\n";
 	}while(error > thres );
 	curr.clear();
 }
 
 float computeparalleld(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial, long long nn)
 {
-	cout << "computeparalleld()\n";
+	// cout << "computeparalleld()\n";
 	float total = 0.0;
 	double thres=1e-10;
 	double dis=1e-12;
@@ -802,7 +802,7 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 
 void computerankd(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial)
 {
-	cout << "computerankd()\n";
+	// cout << "computerankd()\n";
 	double damp = 0.85;
 	double thres=1e-10;
 	long long i,j;
@@ -853,7 +853,7 @@ void computerankd(vector < vector < long long > > & graph,long long n,long long 
 
 float computeparallelc(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers, long long nn)
 {
-	cout << "computeparallelc()\n";
+	// cout << "computeparallelc()\n";
 	float total = 0.0;
 	double damp=0.85;
 	double thres=1e-10;
@@ -1037,7 +1037,7 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 
 void computerankc(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers)
 {
-	cout << "computerankc()\n";
+	// cout << "computerankc()\n";
 	double damp=0.85;
 	double thres=1e-10;
 	long long i,j;
@@ -1097,7 +1097,7 @@ void computerankc(vector < vector < long long > > & graph,long long n,long long 
 
 float computeparalleldc(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers, long long nn)
 {
-	cout << "computeparalleldc()\n";
+	// cout << "computeparalleldc()\n";
 	float total = 0.0;
 	double damp=0.85;
 	double thres=1e-10;
@@ -1303,7 +1303,7 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 
 void computerankdc(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers)
 {
-	cout << "computerankdc()\n";
+	// cout << "computerankdc()\n";
 	double damp=0.85;
 	double thres=1e-10;
 	long long i,j;
@@ -1379,7 +1379,7 @@ void computerankdc(vector < vector < long long > > & graph,long long n,long long
 
 float computeparallelic(vector < vector < long long > > & graph,long long *parent,vector <long long > & left, long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers, long long nn)
 {
-	cout << "computeparallelic()\n";
+	// cout << "computeparallelic()\n";
 	float total = 0.0;
 	double damp=0.85;
 	double thres=1e-10;
@@ -1574,7 +1574,7 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 
 void computerankic(vector < vector < long long > > & graph,long long *parent,vector < long long > & left,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers)
 {
-	cout << "computerankic()\n";
+	// cout << "computerankic()\n";
 	double damp=0.85;
 	double thres=1e-10;
 	long long i,j;
@@ -1637,7 +1637,7 @@ void computerankic(vector < vector < long long > > & graph,long long *parent,vec
 
 float computeparallelidc(vector < vector < long long > > & graph, long long *parent,vector <long long> & left,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers, long long nn)
 {
-	cout << "computeparallelidc()\n";
+	// cout << "computeparallelidc()\n";
 	float total = 0.0;
 	double damp=0.85;
 	double thres=1e-10;
@@ -1853,7 +1853,7 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 
 void computerankidc(vector < vector < long long > > & graph,long long *parent,vector < long long > & left,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers)
 {
-	cout << "computerankidc()\n";
+	// cout << "computerankidc()\n";
 	double damp=0.85;
 	double thres=1e-10;
 	long long i,j;
