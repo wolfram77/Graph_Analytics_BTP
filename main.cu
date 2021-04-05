@@ -592,7 +592,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-1()\n";
+				// cout << "kerneltest-1()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -787,7 +787,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-2()\n";
+				// cout << "kerneltest-2()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -946,7 +946,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-3()\n";
+				// cout << "kerneltest-3()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -1103,7 +1103,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-4()\n";
+				// cout << "kerneltest-4()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -1261,7 +1261,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-5()\n";
+				// cout << "kerneltest-5()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -1419,7 +1419,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-6()\n";
+				// cout << "kerneltest-6()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -1621,7 +1621,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-7()\n";
+				// cout << "kerneltest-7()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -1818,7 +1818,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				cout << "kerneltest-8()\n";
+				// cout << "kerneltest-8()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
