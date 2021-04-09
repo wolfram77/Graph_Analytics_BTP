@@ -7,8 +7,8 @@ using namespace std;
 // mapit = member vector = (mapit[i] = members of component[i] excluding identical nodes)
 float computeparalleli(vector<vector<long long>> &graph, long long *parent, vector<long long> left, long long n, long long *outdeg, vector<long long> &mapit, double *rank,double *initial, long long nn)
 {
+	printf("computeparalleli()\n");
 	// total = time taken by kernel;
-	// cout << "computeparalleli()\n";
 	float total = 0.0;
 	long long i, iterations = 0;
 	// thres = max allowed error
@@ -125,6 +125,7 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
+		printf("[%07.3f ms] kernel1test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -153,6 +154,7 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] kernel1test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -186,12 +188,13 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 	cudaFree(cgraph);
 	cudaFree(ccurr);
 	cudaFree(crank);
+	printf("[%07.3f ms] computeparalleli()\n", total);
 	return total;
 }
 
 void computeranki(vector < vector < long long > > & graph, long long *parent,vector < long long > left,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial, long long nn)
 {
-	// cout << "computeranki()\n";
+	// printf("computeranki()\n");
 	double damp=0.85;
 	double thres=1e-10;
 	long long i,j;
@@ -235,7 +238,7 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 	// as dead node computation is included
 	// we use marked array = to store the nodes which are dead nodes
 	// we calculate the pagerank for nodes which are not marked
-	// cout << "computeparallelid()\n";
+	printf("computeparallelid()\n");
 	float total = 0.0;
 	double thres=1e-10;
 	double dis=1e-12;
@@ -343,6 +346,7 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
+		printf("[%07.3f ms] kernel2test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -369,6 +373,7 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] kernel2test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -415,12 +420,13 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 	cudaFree(ccurr);
 	cudaFree(crank);
 	cudaFree(cmarked);
+	printf("[%07.3f ms] computeparallelid()\n", total);
 	return total;
 }
 
 void computerankid(vector < vector < long long > > & graph,long long *parent,vector < long long > & left, long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial, long long nn)
 {
-	// cout << "computerankid()\n";
+	// printf("computerankid()\n");
 	double damp = 0.85;
 	double thres=1e-10;
 	long long i,j;
@@ -473,7 +479,7 @@ void computerankid(vector < vector < long long > > & graph,long long *parent,vec
 
 float computeparallel(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial, long long nn)
 {
-	// cout << "computeparallel()\n";
+	printf("computeparallel()\n");
 	float total = 0.0;
 	double damp=0.85;
 	double thres=1e-10;
@@ -573,6 +579,7 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
+		printf("[%07.3f ms] kernel3test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -598,6 +605,7 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] kernel3test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -624,13 +632,14 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 	cudaFree(cgraph);
 	cudaFree(ccurr);
 	cudaFree(crank);
+	printf("[%07.3f ms] computeparallel()\n", total);
 	return total;
 }
 
 
 void computerank(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial)
 {
-	// cout << "computerank()\n";
+	// printf("computerank()\n");
 	double damp=0.85;
 	double thres=1e-10;
 	long long i,j, iter=0;
@@ -665,7 +674,7 @@ void computerank(vector < vector < long long > > & graph,long long n,long long *
 
 float computeparalleld(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial, long long nn)
 {
-	// cout << "computeparalleld()\n";
+	printf("computeparalleld()\n");
 	float total = 0.0;
 	double thres=1e-10;
 	double dis=1e-12;
@@ -771,6 +780,7 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
+		printf("[%07.3f ms] kernel4test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -797,6 +807,7 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] kernel4test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -839,12 +850,13 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 	cudaFree(ccurr);
 	cudaFree(cmarked);
 	cudaFree(crank);
+	printf("[%07.3f ms] computeparalleld()\n", total);
 	return total;
 }
 
 void computerankd(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial)
 {
-	// cout << "computerankd()\n";
+	// printf("computerankd()\n");
 	double damp = 0.85;
 	double thres=1e-10;
 	long long i,j;
@@ -895,7 +907,7 @@ void computerankd(vector < vector < long long > > & graph,long long n,long long 
 
 float computeparallelc(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers, long long nn)
 {
-	// cout << "computeparallelc()\n";
+	printf("computeparallelc()\n");
 	float total = 0.0;
 	double damp=0.85;
 	double thres=1e-10;
@@ -1008,6 +1020,7 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
+		printf("[%07.3f ms] kernel3test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1034,6 +1047,7 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] kernel3test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1066,12 +1080,13 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 	cudaFree(cgraph);
 	cudaFree(ccurr);
 	cudaFree(crank);
+	printf("[%07.3f ms] computeparallelc()\n", total);
 	return total;
 }
 
 void computerankc(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers)
 {
-	// cout << "computerankc()\n";
+	// printf("computerankc()\n");
 	double damp=0.85;
 	double thres=1e-10;
 	long long i, j;
@@ -1119,7 +1134,7 @@ void computerankc(vector < vector < long long > > & graph,long long n,long long 
 
 float computeparalleldc(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers, long long nn)
 {
-	// cout << "computeparalleldc()\n";
+	printf("computeparalleldc()\n");
 	float total = 0.0;
 	double damp=0.85;
 	double thres=1e-10;
@@ -1237,6 +1252,7 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
+		printf("[%07.3f ms] kernel4test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1263,6 +1279,7 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] kernel4test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1308,12 +1325,13 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 	cudaFree(ccurr);
 	cudaFree(cmarked);
 	cudaFree(crank);
+	printf("[%07.3f ms] computeparalleldc()\n", total);
 	return total;
 }
 
 void computerankdc(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers)
 {
-	// cout << "computerankdc()\n";
+	// printf("computerankdc()\n");
 	double damp=0.85;
 	double thres=1e-10;
 	long long i, j;
@@ -1378,7 +1396,7 @@ void computerankdc(vector < vector < long long > > & graph,long long n,long long
 
 float computeparallelic(vector < vector < long long > > & graph,long long *parent,vector <long long > & left, long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers, long long nn)
 {
-	// cout << "computeparallelic()\n";
+	printf("computeparallelic()\n");
 	float total = 0.0;
 	double damp=0.85;
 	double thres=1e-10;
@@ -1493,6 +1511,7 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
+		printf("[%07.3f ms] kernel1test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1519,6 +1538,7 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] kernel1test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1556,12 +1576,13 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 	cudaFree(ccurr);
 	cudaFree(cparent);
 	cudaFree(crank);
+	printf("[%07.3f ms] computeparallelic()\n", total);
 	return total;
 }
 
 void computerankic(vector < vector < long long > > & graph,long long *parent,vector < long long > & left,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers)
 {
-	// cout << "computerankic()\n";
+	// printf("computerankic()\n");
 	double damp=0.85;
 	double thres=1e-10;
 	long long i, j;
@@ -1611,7 +1632,7 @@ void computerankic(vector < vector < long long > > & graph,long long *parent,vec
 
 float computeparallelidc(vector < vector < long long > > & graph, long long *parent,vector <long long> & left,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers, long long nn)
 {
-	// cout << "computeparallelidc()\n";
+	printf("computeparallelidc()\n");
 	float total = 0.0;
 	double damp=0.85;
 	double thres=1e-10;
@@ -1733,6 +1754,7 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
+		printf("[%07.3f ms] kernel2test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1758,6 +1780,7 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] kernel2test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1809,12 +1832,13 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 	cudaFree(ccurr);
 	cudaFree(crank);
 	cudaFree(cmarked);
+	printf("[%07.3f ms] computeparallelidc()\n", total);
 	return total;
 }
 
 void computerankidc(vector < vector < long long > > & graph,long long *parent,vector < long long > & left,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial,long long *level,long long *redir,double *powers)
 {
-	// cout << "computerankidc()\n";
+	// printf("computerankidc()\n");
 	double damp=0.85;
 	double thres=1e-10;
 	long long i, j;

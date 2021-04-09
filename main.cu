@@ -409,6 +409,7 @@ int main(int argc, char **argv) {
 
 	if(optident==1 && optchain==0 && optdead==0)
 	{
+		printf("if(optident==1 && optchain==0 && optdead==0)\n");
 		// parent/head of the identical nodes
 		long long *parent = (long long *)malloc(n*sizeof(long long));
 		// identical nodes whose pagerank won't be calculated
@@ -573,6 +574,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -620,6 +622,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -638,6 +641,7 @@ int main(int argc, char **argv) {
 
 	if(optident==1 && optchain==0 && optdead==1)
 	{
+		printf("if(optident==1 && optchain==0 && optdead==1)\n");
 		long long *parent = (long long *)malloc(n*sizeof(long long));
 		vector < vector < long long > > left(com);
 		for(i=0;i<n;i++){
@@ -772,6 +776,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -817,6 +822,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -833,6 +839,7 @@ int main(int argc, char **argv) {
 
 	if(optident==0 && optchain==0 && optdead==0)
 	{
+		printf("if(optident==0 && optchain==0 && optdead==0)\n");
 		vector < long long > par;
 		par.push_back(0);
 
@@ -933,6 +940,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -978,6 +986,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -994,6 +1003,7 @@ int main(int argc, char **argv) {
 
 	if(optident==0 && optchain==0 && optdead==1)
 	{
+		printf("if(optident==0 && optchain==0 && optdead==1)\n");
 		vector < long long > par;
 		par.push_back(0);
 		for(i=0;i<com;i++){
@@ -1092,6 +1102,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1137,6 +1148,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1154,6 +1166,7 @@ int main(int argc, char **argv) {
 
 	if(optident==0 && optchain==1 && optdead==0)
 	{
+		printf("if(optident==0 && optchain==1 && optdead==0)\n");
 		vector < long long > par;
 		par.push_back(0);
 		for(i=0;i<com;i++){
@@ -1252,6 +1265,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1297,6 +1311,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1314,6 +1329,7 @@ int main(int argc, char **argv) {
 
 	if(optident==0 && optchain==1 && optdead==1)
 	{
+		printf("if(optident==0 && optchain==1 && optdead==1)\n");
 		vector < long long > par;
 		par.push_back(0);
 		for(i=0;i<com;i++){
@@ -1412,6 +1428,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1457,6 +1474,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1474,6 +1492,7 @@ int main(int argc, char **argv) {
 
 	if(optident==1 && optchain==1 && optdead==0)
 	{
+		printf("if(optident==1 && optchain==1 && optdead==0)\n");
 		long long parent[n];
 		vector < vector < long long > > left(com);
 
@@ -1616,6 +1635,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1661,6 +1681,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1678,6 +1699,7 @@ int main(int argc, char **argv) {
 
 	if(optident==1 && optchain==1 && optdead==1)
 	{
+		printf("if(optident==1 && optchain==1 && optdead==1)\n");
 		long long *parent = (long long *)malloc(n*sizeof(long long));
 		vector < vector < long long > > left(com);
 		for(i=0;i<n;i++){
@@ -1815,6 +1837,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1860,6 +1883,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
+				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
