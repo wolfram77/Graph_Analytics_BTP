@@ -1,5 +1,8 @@
 #include "kernels.cuh"
+#include <nvgraph.h>
+#include <chrono>
 using namespace std;
+using namespace std::chrono;
 
 // graph = graph with reversed edges
 // parent = to store the parent of identical nodes
@@ -125,7 +128,7 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		printf("[%07.3f ms] kernel1test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernel1test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -154,7 +157,7 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] kernel1test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernel1test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -188,7 +191,7 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 	cudaFree(cgraph);
 	cudaFree(ccurr);
 	cudaFree(crank);
-	printf("[%07.3f ms] computeparalleli()\n", total);
+	// printf("[%07.3f ms] computeparalleli()\n", total);
 	return total;
 }
 
@@ -346,7 +349,7 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		printf("[%07.3f ms] kernel2test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernel2test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -373,7 +376,7 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] kernel2test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernel2test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -420,7 +423,7 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 	cudaFree(ccurr);
 	cudaFree(crank);
 	cudaFree(cmarked);
-	printf("[%07.3f ms] computeparallelid()\n", total);
+	// printf("[%07.3f ms] computeparallelid()\n", total);
 	return total;
 }
 
@@ -579,7 +582,7 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		printf("[%07.3f ms] kernel3test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernel3test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -605,7 +608,7 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] kernel3test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernel3test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -632,10 +635,9 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 	cudaFree(cgraph);
 	cudaFree(ccurr);
 	cudaFree(crank);
-	printf("[%07.3f ms] computeparallel()\n", total);
+	// printf("[%07.3f ms] computeparallel()\n", total);
 	return total;
 }
-
 
 void computerank(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial)
 {
@@ -670,6 +672,81 @@ void computerank(vector < vector < long long > > & graph,long long n,long long *
 		// cout << "computerank(): [" << iter << "] error: " << error << " thres: " << thres << "\n";
 	}while(error > thres );
 	curr.clear();
+}
+
+float computerank2(vector < vector < long long > > & rgraph,long long n,long long *outdeg,vector < long long > &  mapit,float *rank,float *initial)
+{
+	float damp=0.85;
+	float thres=1e-6;
+  nvgraphHandle_t handlenv;
+  nvgraphGraphDescr_t graphdescnv;
+  struct nvgraphCSCTopology32I_st topocscnv;
+	int i,j;int offset;
+	vector<int> cscrow1;
+	for(i=0,offset=0;i<n;i++){
+		cscrow1.push_back(offset);
+		offset+=rgraph[i].size();
+		// printf("cscrow1[%d]=%d\n",i,cscrow1[i]);
+	}
+	cscrow1.push_back(offset);
+	vector<int> cscrow2;
+	for(i=0;i<n;i++){
+		// printf("rgraph[%d]=", i);
+		for(j=0;j<rgraph[i].size();j++){
+			cscrow2.push_back(rgraph[i][j]);
+			// printf("%d ",rgraph[i][j]);
+		}
+		// printf("\n");
+	}
+	for(i=0;i<cscrow2.size();i++){
+		// printf("cscrow2[%d]=%d\n",i,cscrow2[i]);
+	}
+	// printf("outdeg=%p\n", outdeg);
+	for(i=0;i<n;i++){
+		// printf("outdeg[%d]=%d\n",i,outdeg[i]);
+	}
+	vector<float> data1;
+	// printf("data1=%p\n", data1.data());
+	for(i=0;i<n;i++){
+		if(outdeg[i]==0){
+			data1.push_back(1);
+		}
+		else{
+			data1.push_back(0);
+		}
+		// printf("data1[%d]=%f\n",i,data1[i]);
+	}
+	vector<float> data2;
+	// printf("data2=%p\n", data2.data());
+	for(i=0;i<n;i++){
+		for(j=0;j<rgraph[i].size();j++){
+			data2.push_back(1.0/outdeg[rgraph[i][j]]);
+		}
+	}
+	for(i=0;i<data2.size();i++){
+		// printf("data2[%d]=%f\n",i,data2[i]);
+	}
+  nvgraphCreate(&handlenv);
+  nvgraphCreateGraphDescr(handlenv,&graphdescnv);
+  topocscnv.nvertices=n;
+  topocscnv.nedges=cscrow2.size();
+  topocscnv.destination_offsets=cscrow1.data();
+  topocscnv.source_indices=cscrow2.data();
+  nvgraphSetGraphStructure(handlenv,graphdescnv,&topocscnv,NVGRAPH_CSC_32);
+  vector<cudaDataType_t> type1{CUDA_R_32F,CUDA_R_32F };
+  vector<cudaDataType_t> type2{CUDA_R_32F};
+  nvgraphAllocateVertexData(handlenv,graphdescnv,type1.size(),type1.data());
+  nvgraphAllocateEdgeData(handlenv,graphdescnv,type2.size(),type2.data());
+  nvgraphSetVertexData(handlenv,graphdescnv,data1.data(),0);
+  nvgraphSetVertexData(handlenv,graphdescnv,rank,1);
+  nvgraphSetEdgeData(handlenv,graphdescnv,data2.data(),0);
+	auto t0=high_resolution_clock::now();
+  nvgraphPagerank(handlenv,graphdescnv,0,&damp,0,0,1,thres,0);
+	auto t1=high_resolution_clock::now();
+  nvgraphGetVertexData(handlenv,graphdescnv,rank,1);
+  nvgraphDestroyGraphDescr(handlenv,graphdescnv);
+  nvgraphDestroy(handlenv);
+	return (duration_cast<milliseconds>(t1-t0)).count();
 }
 
 float computeparalleld(vector < vector < long long > > & graph,long long n,long long *outdeg,vector < long long > &  mapit,double *rank,double *initial, long long nn)
@@ -780,7 +857,7 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		printf("[%07.3f ms] kernel4test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernel4test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -807,7 +884,7 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] kernel4test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernel4test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -850,7 +927,7 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 	cudaFree(ccurr);
 	cudaFree(cmarked);
 	cudaFree(crank);
-	printf("[%07.3f ms] computeparalleld()\n", total);
+	// printf("[%07.3f ms] computeparalleld()\n", total);
 	return total;
 }
 
@@ -1020,7 +1097,7 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		printf("[%07.3f ms] kernel3test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernel3test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1047,7 +1124,7 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] kernel3test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernel3test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1080,7 +1157,7 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 	cudaFree(cgraph);
 	cudaFree(ccurr);
 	cudaFree(crank);
-	printf("[%07.3f ms] computeparallelc()\n", total);
+	// printf("[%07.3f ms] computeparallelc()\n", total);
 	return total;
 }
 
@@ -1252,7 +1329,7 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		printf("[%07.3f ms] kernel4test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernel4test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1279,7 +1356,7 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] kernel4test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernel4test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1325,7 +1402,7 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 	cudaFree(ccurr);
 	cudaFree(cmarked);
 	cudaFree(crank);
-	printf("[%07.3f ms] computeparalleldc()\n", total);
+	// printf("[%07.3f ms] computeparalleldc()\n", total);
 	return total;
 }
 
@@ -1511,7 +1588,7 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		printf("[%07.3f ms] kernel1test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernel1test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1538,7 +1615,7 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] kernel1test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernel1test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1576,7 +1653,7 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 	cudaFree(ccurr);
 	cudaFree(cparent);
 	cudaFree(crank);
-	printf("[%07.3f ms] computeparallelic()\n", total);
+	// printf("[%07.3f ms] computeparallelic()\n", total);
 	return total;
 }
 
@@ -1754,7 +1831,7 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		printf("[%07.3f ms] kernel2test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernel2test()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1780,7 +1857,7 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] kernel2test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernel2test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1832,7 +1909,7 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 	cudaFree(ccurr);
 	cudaFree(crank);
 	cudaFree(cmarked);
-	printf("[%07.3f ms] computeparallelidc()\n", total);
+	// printf("[%07.3f ms] computeparallelidc()\n", total);
 	return total;
 }
 

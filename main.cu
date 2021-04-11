@@ -8,7 +8,6 @@
 #include <map>
 #include <chrono>
 #include "functions.cuh"
-#include "measure.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -574,7 +573,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -622,7 +621,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -631,11 +630,9 @@ int main(int argc, char **argv) {
 			for(j=par[i];j<pivot;j++){
 				total += computeparalleli(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
 			}
-			totalcpu += measureDuration([&]() {
-				for(j=pivot;j<par[i+1];j++){
-					computeranki(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
-				}
-			});
+			for(j=pivot;j<par[i+1];j++){
+				computeranki(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
+			}
 		}
 	}
 
@@ -776,7 +773,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -822,18 +819,16 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
 			for(j=par[i];j<pivot;j++){
 				total += computeparallelid(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
 			}
-			totalcpu += measureDuration([&]() {
-				for(j=pivot;j<par[i+1];j++){
-					computerankid(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
-				}
-			});
+			for(j=pivot;j<par[i+1];j++){
+				computerankid(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
+			}
 		}
 	}
 
@@ -940,7 +935,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -986,18 +981,16 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
 			for(j=par[i];j<pivot;j++){
 				total += computeparallel(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
 			}
-			totalcpu += measureDuration([&]() {
-				for(j=pivot;j<par[i+1];j++){
-					computerank(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial);
-				}
-			});
+			for(j=pivot;j<par[i+1];j++){
+				computerank(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial);
+			}
 		}
 	}
 
@@ -1102,7 +1095,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1148,7 +1141,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1156,11 +1149,9 @@ int main(int argc, char **argv) {
 			for(j=par[i];j<pivot;j++){
 				total += computeparalleld(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
 			}
-			totalcpu += measureDuration([&]() {
-				for(j=pivot;j<par[i+1];j++){
-					computerankd(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial);
-				}
-			});
+			for(j=pivot;j<par[i+1];j++){
+				computerankd(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial);
+			}
 		}
 	}
 
@@ -1265,7 +1256,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1311,7 +1302,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1319,11 +1310,9 @@ int main(int argc, char **argv) {
 			for(j=par[i];j<pivot;j++){
 				total += computeparallelc(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial,levelz,redir,powers, n);
 			}
-			totalcpu += measureDuration([&]() {
-				for(j=pivot;j<par[i+1];j++){
-					computerankc(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
-				}
-			});
+			for(j=pivot;j<par[i+1];j++){
+				computerankc(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
+			}
 		}
 	}
 
@@ -1428,7 +1417,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1474,7 +1463,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1482,11 +1471,9 @@ int main(int argc, char **argv) {
 			for(j=par[i];j<pivot;j++){
 				total += computeparalleldc(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial,levelz,redir,powers, n);
 			}
-			totalcpu += measureDuration([&]() {
-				for(j=pivot;j<par[i+1];j++){
-					computerankdc(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
-				}
-			});
+			for(j=pivot;j<par[i+1];j++){
+				computerankdc(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
+			}
 		}
 	}
 
@@ -1635,7 +1622,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1681,7 +1668,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1689,11 +1676,9 @@ int main(int argc, char **argv) {
 			for(j=par[i];j<pivot;j++){
 				total += computeparallelic(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial,levelz,redir,powers, n);
 			}
-			totalcpu += measureDuration([&]() {
-				for(j=pivot;j<par[i+1];j++){
-					computerankic(rcgraph, parent, left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
-				}
-			});
+			for(j=pivot;j<par[i+1];j++){
+				computerankic(rcgraph, parent, left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
+			}
 		}
 	}
 
@@ -1837,7 +1822,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1883,7 +1868,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1891,11 +1876,9 @@ int main(int argc, char **argv) {
 			for(j=par[i];j<pivot;j++){
 				total += computeparallelidc(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial,levelz,redir,powers, n);
 			}
-			totalcpu += measureDuration([&]() {
-				for(j=pivot;j<par[i+1];j++){
-					computerankidc(rcgraph, parent, left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
-				}
-			});
+			for(j=pivot;j<par[i+1];j++){
+				computerankidc(rcgraph, parent, left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, levelz, redir, powers);
+			}
 		}
 	}
 
@@ -1906,18 +1889,30 @@ int main(int argc, char **argv) {
 	for(i=0;i<n;i++){
 		rank[i]=rank[i]/sum;
 	}
-	cout << "Ranks:\n";
+	cout << "rank:\n";
 	if (argc > 2) for(i=0;i<n;i++){
 		cout << rank[i] << "\n";
 	}
+	cout << "\n";
+	vector<float> rank2(n);
+	computerank2(rgraph, n, outdeg, members[order[0]], rank2.data(), NULL);
+	cout << "rank2:\n";
+	if (argc > 2) for(i=0;i<n;i++){
+		cout << rank2[i] << "\n";
+	}
+	cout << "\n";
+	double error2=0;
+	for (i=0;i<n;i++){
+		error2+=abs(rank2[i]-rank[i]);
+	}
+	cout << "error2:" << error2;
 	cout << "\n";
 	auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
     cout << "Time taken: "
          << duration.count() / 1000.0 << " ms\n";
 
-    cout << "Kernel time: " << total << " ms\n";
-    cout << "CPU time:    " << totalcpu << " ms\n\n";
+    cout << "Kernel time: " << total << " ms\n\n\n";
     cudaFree(cstart);
     cudaFree(cend);
     cudaFree(corder);
