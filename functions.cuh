@@ -103,7 +103,7 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 
 		dim3 threadB(32,32);
-		dim3 blockB(32,32);
+		dim3 blockB(1024,8);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
@@ -331,7 +331,7 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 		cudaMemcpy(cmarked, marked, n*sizeof(long long), cudaMemcpyHostToDevice);
 
 		dim3 threadB(32,32);
-		dim3 blockB(32,32);
+		dim3 blockB(1024,8);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
@@ -564,7 +564,7 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 
 		dim3 threadB(32,32);
-		dim3 blockB(32,32);
+		dim3 blockB(1024,8);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
@@ -839,7 +839,7 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 		cudaMemcpy(cmarked, marked, n*sizeof(long long), cudaMemcpyHostToDevice);
 
 		dim3 threadB(32,32);
-		dim3 blockB(32,32);
+		dim3 blockB(1024,8);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
@@ -1079,7 +1079,7 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 
 
 		dim3 threadB(32,32);
-		dim3 blockB(32,32);
+		dim3 blockB(1024,8);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
@@ -1311,7 +1311,7 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 		cudaMemcpy(cmarked, marked, n*sizeof(long long), cudaMemcpyHostToDevice);
 
 		dim3 threadB(32,32);
-		dim3 blockB(32,32);
+		dim3 blockB(1024,8);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
@@ -1570,7 +1570,7 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 
 		dim3 threadB(32,32);
-		dim3 blockB(32,32);
+		dim3 blockB(1024,8);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
@@ -1813,7 +1813,7 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 		cudaMemcpy(cmarked, marked, n*sizeof(long long), cudaMemcpyHostToDevice);
 
 		dim3 threadB(32,32);
-		dim3 blockB(32,32);
+		dim3 blockB(1024,8);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);

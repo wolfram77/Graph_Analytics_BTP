@@ -543,7 +543,7 @@ int main(int argc, char **argv) {
 				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
-				dim3 blockB(32,32);
+				dim3 blockB(1024,8);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -743,7 +743,7 @@ int main(int argc, char **argv) {
 				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
-				dim3 blockB(32,32);
+				dim3 blockB(1024,8);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -905,7 +905,7 @@ int main(int argc, char **argv) {
 				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
-				dim3 blockB(32,32);
+				dim3 blockB(1024,8);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -1065,7 +1065,7 @@ int main(int argc, char **argv) {
 				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
-				dim3 blockB(32,32);
+				dim3 blockB(1024,8);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -1226,7 +1226,7 @@ int main(int argc, char **argv) {
 				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
-				dim3 blockB(32,32);
+				dim3 blockB(1024,8);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -1387,7 +1387,7 @@ int main(int argc, char **argv) {
 				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
-				dim3 blockB(32,32);
+				dim3 blockB(1024,8);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -1592,7 +1592,7 @@ int main(int argc, char **argv) {
 				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
-				dim3 blockB(32,32);
+				dim3 blockB(1024,8);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -1792,7 +1792,7 @@ int main(int argc, char **argv) {
 				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
-				dim3 blockB(32,32);
+				dim3 blockB(1024,8);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
