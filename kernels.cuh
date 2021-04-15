@@ -88,12 +88,14 @@ __global__ void kernel1test(long long *cn, long long *csize, long long *cmem, lo
 	for(;w<(*cn);w+=num_threads_x){
 		// size = size of adj. list of node at index w
 		long long size = csize[w];
-		long long j = blockIdx.y*blockDim.y + threadIdx.y;
-		long long num_threads_y = blockDim.y * gridDim.y;
+		long long j = 0;
+		long long num_threads_y = 1;
+		double ccurrsum = 0;
 		for(;j<size;j+=num_threads_y){
 			long long node = cgraph[ctemp[w]+j];
-			atomicAdd(&ccurr[w], crank[cparent[node]]/coutdeg[node]);
+			ccurrsum += crank[cparent[node]]/coutdeg[node];
 		}
+		ccurr[w] += ccurrsum;
 	}
 }
 
@@ -123,12 +125,14 @@ __global__ void kernel2test(long long *cn, long long *csize, long long *cmem, lo
 	for(;w<(*cn);w+=num_threads_x){
 		if(cmarked[w] != 0) continue;
 		long long size = csize[w];
-		long long j = blockIdx.y*blockDim.y + threadIdx.y;
-		long long num_threads_y = blockDim.y * gridDim.y;
+		long long j = 0;
+		long long num_threads_y = 1;
+		double ccurrsum = 0;
 		for(;j<size;j+=num_threads_y){
 			long long node = cgraph[ctemp[w]+j];
-			atomicAdd(&ccurr[w], crank[cparent[node]]/coutdeg[node]);
+			ccurrsum += crank[cparent[node]]/coutdeg[node];
 		}
+		ccurr[w] += ccurrsum;
 	}
 }
 
@@ -155,12 +159,14 @@ __global__ void kernel3test(long long *cn, long long *csize, long long *cmem, lo
 	long long num_threads_x = blockDim.x * gridDim.x;
 	for(;w<(*cn);w+=num_threads_x){
 		long long size = csize[w];
-		long long j = blockIdx.y*blockDim.y + threadIdx.y;
-		long long num_threads_y = blockDim.y * gridDim.y;
+		long long j = 0;
+		long long num_threads_y = 1;
+		double ccurrsum = 0;
 		for(;j<size;j+=num_threads_y){
 			long long node = cgraph[ctemp[w]+j];
-			atomicAdd(&ccurr[w], crank[node]/coutdeg[node]);
+			ccurrsum += crank[node]/coutdeg[node];
 		}
+		ccurr[w] += ccurrsum;
 	}
 }
 
@@ -186,12 +192,14 @@ __global__ void kernel4test(long long *cn, long long *csize, long long *cmem, lo
 	for(;w<(*cn);w+=num_threads_x){
 		if(cmarked[w] != 0) continue;
 		long long size = csize[w];
-		long long j = blockIdx.y*blockDim.y + threadIdx.y;
-		long long num_threads_y = blockDim.y * gridDim.y;
+		long long j = 0;
+		long long num_threads_y = 1;
+		double ccurrsum = 0;
 		for(;j<size;j+=num_threads_y){
 			long long node = cgraph[ctemp[w]+j];
-			atomicAdd(&ccurr[w], crank[node]/coutdeg[node]);
+			ccurrsum += crank[node]/coutdeg[node];
 		}
+		ccurr[w] += ccurrsum;
 	}
 }
 
