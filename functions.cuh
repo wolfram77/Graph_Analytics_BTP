@@ -102,8 +102,11 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 		cudaMemcpy(ccurr, curr, n*sizeof(double), cudaMemcpyHostToDevice);
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 
-		dim3 threadB(32*32);
-		dim3 blockB(1024*8);
+		long long num_n=pivot;
+		long long num_threads=1024;
+		long long num_blocks_n=(num_n/1024)+1;
+		dim3 threadB(num_threads);
+		dim3 blockB(num_blocks_n);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
@@ -330,8 +333,11 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 		cudaMemcpy(cmarked, marked, n*sizeof(long long), cudaMemcpyHostToDevice);
 
-		dim3 threadB(32*32);
-		dim3 blockB(1024*8);
+		long long num_n=pivot;
+		long long num_threads=1024;
+		long long num_blocks_n=(num_n/1024)+1;
+		dim3 threadB(num_threads);
+		dim3 blockB(num_blocks_n);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
@@ -563,8 +569,11 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 		cudaMemcpy(ccurr, curr, n*sizeof(double), cudaMemcpyHostToDevice);
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 
-		dim3 threadB(32*32);
-		dim3 blockB(1024*8);
+		long long num_n=pivot;
+		long long num_threads=1024;
+		long long num_blocks_n=(num_n/1024)+1;
+		dim3 threadB(num_threads);
+		dim3 blockB(num_blocks_n);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
@@ -838,8 +847,11 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 		cudaMemcpy(cmarked, marked, n*sizeof(long long), cudaMemcpyHostToDevice);
 
-		dim3 threadB(32*32);
-		dim3 blockB(1024*8);
+		long long num_n=pivot;
+		long long num_threads=1024;
+		long long num_blocks_n=(num_n/1024)+1;
+		dim3 threadB(num_threads);
+		dim3 blockB(num_blocks_n);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
@@ -1078,8 +1090,11 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 
 
-		dim3 threadB(32*32);
-		dim3 blockB(1024*8);
+		long long num_n=pivot;
+		long long num_threads=1024;
+		long long num_blocks_n=(num_n/1024)+1;
+		dim3 threadB(num_threads);
+		dim3 blockB(num_blocks_n);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
@@ -1310,8 +1325,11 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 		cudaMemcpy(cmarked, marked, n*sizeof(long long), cudaMemcpyHostToDevice);
 
-		dim3 threadB(32*32);
-		dim3 blockB(1024*8);
+		long long num_n=pivot;
+		long long num_threads=1024;
+		long long num_blocks_n=(num_n/1024)+1;
+		dim3 threadB(num_threads);
+		dim3 blockB(num_blocks_n);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
@@ -1569,8 +1587,11 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 		cudaMemcpy(ccurr, curr, n*sizeof(double), cudaMemcpyHostToDevice);
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 
-		dim3 threadB(32*32);
-		dim3 blockB(1024*8);
+		long long num_n=pivot;
+		long long num_threads=1024;
+		long long num_blocks_n=(num_n/1024)+1;
+		dim3 threadB(num_threads);
+		dim3 blockB(num_blocks_n);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
@@ -1812,8 +1833,11 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 		cudaMemcpy(cmarked, marked, n*sizeof(long long), cudaMemcpyHostToDevice);
 
-		dim3 threadB(32*32);
-		dim3 blockB(1024*8);
+		long long num_n=pivot;
+		long long num_threads=1024;
+		long long num_blocks_n=(num_n/1024)+1;
+		dim3 threadB(num_threads);
+		dim3 blockB(num_blocks_n);
 
 		cudaEvent_t start, stop;
 		cudaEventCreate(&start);
