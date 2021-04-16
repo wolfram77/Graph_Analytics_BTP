@@ -1,5 +1,8 @@
 #include "kernels.cuh"
+#include <nvgraph.h>
+#include <chrono>
 using namespace std;
+using namespace std::chrono;
 #define MAX 10000
 double computeparalleli(vector<vector<long>> &graph, long *parent, vector<long> left, long n, long *outdeg, vector<long> &mapit, double *rank,double *initial, long nn)
 {
@@ -18,7 +21,7 @@ double computeparalleli(vector<vector<long>> &graph, long *parent, vector<long> 
 			mapit[pivot]=node;
 			mapit[i]=temp;
 			pivot++;
-		}   
+		}
 	}
 	double *curr = (double *)malloc(n*sizeof(double));
 	for(long i=0;i<n;i++){
@@ -68,7 +71,7 @@ double computeparalleli(vector<vector<long>> &graph, long *parent, vector<long> 
 	cudaMemcpy(ctemp, temp, (n+1)*sizeof(long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cgraph, graphh, szz*sizeof(long), cudaMemcpyHostToDevice);
 
-	do  
+	do
 	{
 		error=0;
 		for(i=0;i<n;i++){
@@ -91,7 +94,7 @@ double computeparalleli(vector<vector<long>> &graph, long *parent, vector<long> 
 
 		cudaEventRecord(start, 0);
 		kernel1test<<<blockB ,threadB>>>(cn, cmem, cgraph, ctemp, ccurrRank, crank, coutdeg, cparent);
-		
+
 		cudaDeviceSynchronize();
 
 		cudaEventRecord(stop, 0);
@@ -102,8 +105,8 @@ double computeparalleli(vector<vector<long>> &graph, long *parent, vector<long> 
 		cudaEventDestroy(stop);
 		total += elapsedTime;
 		for(i=pivot;i<n;i++)
-		{   
-			{   
+		{
+			{
 				cudaMemcpy(cm, &i, sizeof(long), cudaMemcpyHostToDevice);
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -118,8 +121,8 @@ double computeparalleli(vector<vector<long>> &graph, long *parent, vector<long> 
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-			}   
-		}   
+			}
+		}
 		cudaMemcpy(currRank, ccurrRank, szz*sizeof(double) , cudaMemcpyDeviceToHost);
 		for(i=0;i<n;i++){
 			for(long kk=0;kk<graph[mapit[i]].size();kk++){
@@ -131,10 +134,10 @@ double computeparalleli(vector<vector<long>> &graph, long *parent, vector<long> 
 			anse=max(anse, fabs(randomp+initial[mapit[i]]+damp*curr[i]-rank[mapit[i]]));
 		}
 		for(i=0;i<n;i++)
-		{   
+		{
 			{
 				rank[mapit[i]]=damp*curr[i]+randomp+initial[mapit[i]];
-			}   
+			}
 		}
 		iterations++;
 		error = anse;
@@ -232,15 +235,15 @@ double computeparallelid(vector < vector < long > > & graph,long *parent,vector 
 	long pivot=0;
 	long thresh=MAX;
 	for(i=0;i<n;i++)
-	{   
+	{
 		long node=mapit[i];
 		if(graph[node].size()<thresh)
-		{   
+		{
 			long temp=mapit[pivot];
 			mapit[pivot]=node;
 			mapit[i]=temp;
 			pivot++;
-		}   
+		}
 	}
 
 	long *cn, *cm, *cmem, *coutdeg, *cparent, *ctemp, *cgraph, *cmarked;;
@@ -266,7 +269,7 @@ double computeparallelid(vector < vector < long > > & graph,long *parent,vector 
 	cudaMemcpy(ctemp, temp, n*sizeof(long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cgraph, graphh, szz*sizeof(long), cudaMemcpyHostToDevice);
 
-	do  
+	do
 	{
 		error=0;
 		for(i=0;i<n;i++){
@@ -290,7 +293,7 @@ double computeparallelid(vector < vector < long > > & graph,long *parent,vector 
 		cudaEventRecord(start, 0);
 
 		kernel2test<<<blockB,threadB>>>(cn, cmem, cgraph, ctemp, ccurrRank, crank, coutdeg, cparent, cmarked);
-		
+
 		cudaDeviceSynchronize();
 
 		cudaEventRecord(stop, 0);
@@ -302,8 +305,8 @@ double computeparallelid(vector < vector < long > > & graph,long *parent,vector 
 		total += elapsedTime;
 
 		for(i=pivot;i<n;i++)
-		{   
-			{   
+		{
+			{
 				cudaMemcpy(cm, &i, sizeof(long), cudaMemcpyHostToDevice);
 
 				cudaEvent_t start, stop;
@@ -313,7 +316,7 @@ double computeparallelid(vector < vector < long > > & graph,long *parent,vector 
 				cudaEventRecord(start, 0);
 
 				kernel2test1<<<1,1024>>>(cm, cmem, cgraph, ctemp, ccurrRank, crank, coutdeg, cparent, cmarked);
-				
+
 				cudaDeviceSynchronize();
 
 				cudaEventRecord(stop, 0);
@@ -323,8 +326,8 @@ double computeparallelid(vector < vector < long > > & graph,long *parent,vector 
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-			}   
-		}  
+			}
+		}
 		cudaMemcpy(currRank, ccurrRank, szz*sizeof(double) , cudaMemcpyDeviceToHost);
 		for(i=0;i<n;i++){
 			for(long kk=0;kk<graph[mapit[i]].size();kk++){
@@ -342,18 +345,18 @@ double computeparallelid(vector < vector < long > > & graph,long *parent,vector 
 		for(i=0;i<n;i++){
 			if(!marked[i])   {
 				rank[mapit[i]]=damp*curr[i]+randomp+initial[mapit[i]];
-			}   
+			}
 		}
-		if(iterations%20==0){   
-			for(i=0;i<n;i++){   
+		if(iterations%20==0){
+			for(i=0;i<n;i++){
 				if(!marked[i]){
 					if(fabs(prev[i]-curr[i]) < value)
 						marked[i]=1;
 					else
 						prev[i]=curr[i];
-				}   
-			}   
-		}   
+				}
+			}
+		}
 		error = anse;
 	}while(error > thres );
 	for(i=0;i<left.size();i++)
@@ -462,15 +465,15 @@ double computeparallel(vector < vector < long > > & graph,long n,long *outdeg,ve
 	long pivot=0;
 	long thresh=MAX;
 	for(i=0;i<n;i++)
-	{   
+	{
 		long node=mapit[i];
 		if(graph[node].size()<thresh)
-		{   
+		{
 			long temp=mapit[pivot];
 			mapit[pivot]=node;
 			mapit[i]=temp;
 			pivot++;
-		}   
+		}
 	}
 
 	long *cn, *cm, *cmem, *coutdeg, *ctemp, *cgraph;
@@ -497,7 +500,7 @@ double computeparallel(vector < vector < long > > & graph,long n,long *outdeg,ve
 	do
 	{
 		error=0;
-		
+
 		for(i=0;i<n;i++){
 			curr[i]=0;
 		}
@@ -532,8 +535,8 @@ double computeparallel(vector < vector < long > > & graph,long n,long *outdeg,ve
 		cout << elapsedTime << "\n";
 
 		for(i=pivot;i<n;i++)
-		{   
-			{   
+		{
+			{
 				cudaMemcpy(cm, &i, sizeof(long), cudaMemcpyHostToDevice);
 
 				cudaEvent_t start, stop;
@@ -543,7 +546,7 @@ double computeparallel(vector < vector < long > > & graph,long n,long *outdeg,ve
 				cudaEventRecord(start, 0);
 
 				kernel3test1<<<1,1024>>>(cm, cmem, cgraph, ctemp, ccurrRank, crank, coutdeg);
-				
+
 				cudaDeviceSynchronize();
 
 				cudaEventRecord(stop, 0);
@@ -553,8 +556,8 @@ double computeparallel(vector < vector < long > > & graph,long n,long *outdeg,ve
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-			}   
-		}  
+			}
+		}
 		cudaMemcpy(currRank, ccurrRank, szz*sizeof(double) , cudaMemcpyDeviceToHost);
 		for(i=0;i<n;i++){
 			for(long kk=0;kk<graph[mapit[i]].size();kk++){
@@ -616,6 +619,81 @@ void computerank(vector < vector < long > > & graph,long n,long *outdeg,vector <
 	curr.clear();
 }
 
+float computerank2(vector < vector < long long > > & rgraph,long long n,long long *outdeg,vector < long long > &  mapit,float *rank,float *initial)
+{
+	float damp=0.85;
+	float thres=1e-6;
+  nvgraphHandle_t handlenv;
+  nvgraphGraphDescr_t graphdescnv;
+  struct nvgraphCSCTopology32I_st topocscnv;
+	int i,j;int offset;
+	vector<int> cscrow1;
+	for(i=0,offset=0;i<n;i++){
+		cscrow1.push_back(offset);
+		offset+=rgraph[i].size();
+		// printf("cscrow1[%d]=%d\n",i,cscrow1[i]);
+	}
+	cscrow1.push_back(offset);
+	vector<int> cscrow2;
+	for(i=0;i<n;i++){
+		// printf("rgraph[%d]=", i);
+		for(j=0;j<rgraph[i].size();j++){
+			cscrow2.push_back(rgraph[i][j]);
+			// printf("%d ",rgraph[i][j]);
+		}
+		// printf("\n");
+	}
+	for(i=0;i<cscrow2.size();i++){
+		// printf("cscrow2[%d]=%d\n",i,cscrow2[i]);
+	}
+	// printf("outdeg=%p\n", outdeg);
+	for(i=0;i<n;i++){
+		// printf("outdeg[%d]=%d\n",i,outdeg[i]);
+	}
+	vector<float> data1;
+	// printf("data1=%p\n", data1.data());
+	for(i=0;i<n;i++){
+		if(outdeg[i]==0){
+			data1.push_back(1);
+		}
+		else{
+			data1.push_back(0);
+		}
+		// printf("data1[%d]=%f\n",i,data1[i]);
+	}
+	vector<float> data2;
+	// printf("data2=%p\n", data2.data());
+	for(i=0;i<n;i++){
+		for(j=0;j<rgraph[i].size();j++){
+			data2.push_back(1.0/outdeg[rgraph[i][j]]);
+		}
+	}
+	for(i=0;i<data2.size();i++){
+		// printf("data2[%d]=%f\n",i,data2[i]);
+	}
+  nvgraphCreate(&handlenv);
+  nvgraphCreateGraphDescr(handlenv,&graphdescnv);
+  topocscnv.nvertices=n;
+  topocscnv.nedges=cscrow2.size();
+  topocscnv.destination_offsets=cscrow1.data();
+  topocscnv.source_indices=cscrow2.data();
+  nvgraphSetGraphStructure(handlenv,graphdescnv,&topocscnv,NVGRAPH_CSC_32);
+  vector<cudaDataType_t> type1{CUDA_R_32F,CUDA_R_32F };
+  vector<cudaDataType_t> type2{CUDA_R_32F};
+  nvgraphAllocateVertexData(handlenv,graphdescnv,type1.size(),type1.data());
+  nvgraphAllocateEdgeData(handlenv,graphdescnv,type2.size(),type2.data());
+  nvgraphSetVertexData(handlenv,graphdescnv,data1.data(),0);
+  nvgraphSetVertexData(handlenv,graphdescnv,rank,1);
+  nvgraphSetEdgeData(handlenv,graphdescnv,data2.data(),0);
+	auto t0=high_resolution_clock::now();
+  nvgraphPagerank(handlenv,graphdescnv,0,&damp,0,0,1,thres,0);
+	auto t1=high_resolution_clock::now();
+  nvgraphGetVertexData(handlenv,graphdescnv,rank,1);
+  nvgraphDestroyGraphDescr(handlenv,graphdescnv);
+  nvgraphDestroy(handlenv);
+	return (duration_cast<milliseconds>(t1-t0)).count();
+}
+
 double computeparalleld(vector < vector < long > > & graph,long n,long *outdeg,vector < long > &  mapit,double *rank,double *initial, long nn)
 {
 	double total = 0.0;
@@ -660,15 +738,15 @@ double computeparalleld(vector < vector < long > > & graph,long n,long *outdeg,v
 	long thresh=MAX;
 	long pivot=0;
 	for(i=0;i<n;i++)
-	{   
+	{
 		long node=mapit[i];
 		if(graph[node].size()<thresh)
-		{   
+		{
 			long temp=mapit[pivot];
 			mapit[pivot]=node;
 			mapit[i]=temp;
 			pivot++;
-		}   
+		}
 	}
 
 	long *cn, *cm, *cmem, *coutdeg, *ctemp, *cgraph, *cmarked;
@@ -702,7 +780,7 @@ double computeparalleld(vector < vector < long > > & graph,long n,long *outdeg,v
 		for(i=0;i<szz;i++){
 			currRank[i]=0;
 		}
-		
+
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 		cudaMemcpy(cmarked, marked, n*sizeof(long), cudaMemcpyHostToDevice);
 		cudaMemcpy(ccurrRank, currRank, szz*sizeof(double), cudaMemcpyHostToDevice);
@@ -718,7 +796,7 @@ double computeparalleld(vector < vector < long > > & graph,long n,long *outdeg,v
 		cudaEventRecord(start, 0);
 
 		kernel4test<<<blockB,threadB>>>(cn, cmem, cgraph, ctemp, ccurrRank, crank, coutdeg, cmarked);
-		
+
 		cudaDeviceSynchronize();
 
 		cudaEventRecord(stop, 0);
@@ -728,11 +806,11 @@ double computeparalleld(vector < vector < long > > & graph,long n,long *outdeg,v
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
 		total += elapsedTime;
-		
+
 
 		for(i=pivot;i<n;i++)
-		{   
-			{   
+		{
+			{
 				cudaMemcpy(cm, &i, sizeof(long), cudaMemcpyHostToDevice);
 
 				cudaEvent_t start, stop;
@@ -742,7 +820,7 @@ double computeparalleld(vector < vector < long > > & graph,long n,long *outdeg,v
 				cudaEventRecord(start, 0);
 
 				kernel4test1<<<1,1024>>>(cm, cmem, cgraph, ctemp, ccurrRank, crank, coutdeg, cmarked);
-				
+
 				cudaDeviceSynchronize();
 
 				cudaEventRecord(stop, 0);
@@ -752,8 +830,8 @@ double computeparalleld(vector < vector < long > > & graph,long n,long *outdeg,v
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-			}   
-		}  
+			}
+		}
 		cudaMemcpy(currRank, ccurrRank, szz*sizeof(double) , cudaMemcpyDeviceToHost);
 		for(i=0;i<n;i++){
 			for(long kk=0;kk<graph[mapit[i]].size();kk++){
@@ -768,24 +846,24 @@ double computeparalleld(vector < vector < long > > & graph,long n,long *outdeg,v
 		iterations++;
 		for(i=0;i<n;i++)
 		{
-			if(!marked[i])   
+			if(!marked[i])
 			{
 				rank[mapit[i]]=damp*curr[i]+randomp+initial[mapit[i]];
-			}   
+			}
 		}
 		if(iterations%20==0)
-		{   
+		{
 			for(i=0;i<n;i++)
-			{   
+			{
 				if(!marked[i])
-				{   
+				{
 
 					if(fabs(prev[i]-curr[i]) < value )marked[i]=1;
 					else
 						prev[i]=curr[i];
-				}   
-			}   
-		}   
+				}
+			}
+		}
 		error = anse;
 	}while(error > thres );
 	cudaFree(cn);
@@ -862,16 +940,16 @@ double computeparallelc(vector < vector < long > > & graph,long n,long *outdeg,v
 	double randomp=(1-damp)/graph.size();
 	long limit=0;
 	for(i=0;i<n;i++)
-	{   
+	{
 		long node=mapit[i];
 		if(node==redir[node])
-		{   
+		{
 			long temp=mapit[limit];
 			mapit[limit]=node;
 			mapit[i]=temp;
 			limit++;
-		}   
-	} 
+		}
+	}
 
 	long *mem = (long *)malloc(n*sizeof(long));
 	for(i=0;i<n;i++){
@@ -899,16 +977,16 @@ double computeparallelc(vector < vector < long > > & graph,long n,long *outdeg,v
 	long pivot=0;
 	long thresh = 10000;
 	for(i=0;i<limit;i++)
-	{   
+	{
 		long node=mapit[i];
 		if(graph[node].size()<thresh)
-		{   
+		{
 			long temp=mapit[pivot];
 			mapit[pivot]=node;
 			mapit[i]=temp;
 			pivot++;
-		}   
-	}   
+		}
+	}
 
 	long *cn, *cm, *cmem, *coutdeg, *ctemp, *cgraph;
 	double *crank;
@@ -932,8 +1010,8 @@ double computeparallelc(vector < vector < long > > & graph,long n,long *outdeg,v
 	cudaMemcpy(ctemp, temp, n*sizeof(long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cgraph, graphh, szz*sizeof(long), cudaMemcpyHostToDevice);
 
-	do  
-	{   
+	do
+	{
 		error=0;
 		for(i=0;i<n;i++){
 			curr[i]=0;
@@ -941,10 +1019,10 @@ double computeparallelc(vector < vector < long > > & graph,long n,long *outdeg,v
 		for(i=0;i<szz;i++){
 			currRank[i]=0;
 		}
-		
+
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 		cudaMemcpy(ccurrRank, currRank, szz*sizeof(double), cudaMemcpyHostToDevice);
-		
+
 
 		long bx = pivot/1024+1;
 		dim3 threadB(1024, 1);
@@ -957,7 +1035,7 @@ double computeparallelc(vector < vector < long > > & graph,long n,long *outdeg,v
 		cudaEventRecord(start, 0);
 
 		kernel3test<<<blockB,threadB>>>(cn, cmem, cgraph, ctemp, ccurrRank, crank, coutdeg);
-		
+
 		cudaDeviceSynchronize();
 
 		cudaEventRecord(stop, 0);
@@ -969,8 +1047,8 @@ double computeparallelc(vector < vector < long > > & graph,long n,long *outdeg,v
 		total += elapsedTime;
 
 		for(i=pivot;i<limit;i++)
-		{   
-			{   
+		{
+			{
 				cudaMemcpy(cm, &i, sizeof(long), cudaMemcpyHostToDevice);
 
 				cudaEvent_t start, stop;
@@ -990,8 +1068,8 @@ double computeparallelc(vector < vector < long > > & graph,long n,long *outdeg,v
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-			}   
-		}  
+			}
+		}
 		cudaMemcpy(currRank, ccurrRank, szz*sizeof(double) , cudaMemcpyDeviceToHost);
 		for(i=0;i<n;i++){
 			for(long kk=0;kk<graph[mapit[i]].size();kk++){
@@ -1008,14 +1086,14 @@ double computeparallelc(vector < vector < long > > & graph,long n,long *outdeg,v
 				rank[mapit[i]]=damp*curr[i]+randomp+initial[mapit[i]];
 		}
 		iterations++;
-		error = anse; 
+		error = anse;
 	}while(error > thres);
 	for(i=limit;i<n;i++)
-	{   
+	{
 		long node=mapit[i];
 		double val=powers[level[node]];
 		rank[node]=rank[redir[node]]*val+(1.0-val)/graph.size();
-	}   
+	}
 	cudaFree(cn);
 	cudaFree(cm);
 	cudaFree(cmem);
@@ -1093,15 +1171,15 @@ double computeparalleldc(vector < vector < long > > & graph,long n,long *outdeg,
 	double randomp=(1-damp)/graph.size();
 	long limit=0;
 	for(i=0;i<n;i++)
-	{   
+	{
 		long node=mapit[i];
 		if(node==redir[node])
-		{   
+		{
 			long temp=mapit[limit];
 			mapit[limit]=node;
 			mapit[i]=temp;
 			limit++;
-		}   
+		}
 	}
 
 	long *mem = (long *)malloc(n*sizeof(long));
@@ -1130,16 +1208,16 @@ double computeparalleldc(vector < vector < long > > & graph,long n,long *outdeg,
 	long pivot=0;
 	long thresh=MAX;
 	for(i=0;i<limit;i++)
-	{   
+	{
 		long node=mapit[i];
 		if(graph[node].size()<thresh)
-		{   
+		{
 			long temp=mapit[pivot];
 			mapit[pivot]=node;
 			mapit[i]=temp;
 			pivot++;
-		}   
-	}   
+		}
+	}
 
 	long *cn, *cm, *cmem, *coutdeg, *ctemp, *cgraph, *cmarked;
 	double *crank;
@@ -1163,8 +1241,8 @@ double computeparalleldc(vector < vector < long > > & graph,long n,long *outdeg,
 	cudaMemcpy(ctemp, temp, n*sizeof(long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cgraph, graphh, szz*sizeof(long), cudaMemcpyHostToDevice);
 
-	do  
-	{   
+	do
+	{
 		error=0;
 		for(i=0;i<n;i++){
 			curr[i]=0;
@@ -1172,7 +1250,7 @@ double computeparalleldc(vector < vector < long > > & graph,long n,long *outdeg,
 		for(i=0;i<szz;i++){
 			currRank[i]=0;
 		}
-		
+
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 		cudaMemcpy(cmarked, marked, n*sizeof(long), cudaMemcpyHostToDevice);
 		cudaMemcpy(ccurrRank, currRank, szz*sizeof(double), cudaMemcpyHostToDevice);
@@ -1188,7 +1266,7 @@ double computeparalleldc(vector < vector < long > > & graph,long n,long *outdeg,
 		cudaEventRecord(start, 0);
 
 		kernel4test<<<blockB,threadB>>>(cn, cmem, cgraph, ctemp, ccurrRank, crank, coutdeg, cmarked);
-		
+
 		cudaDeviceSynchronize();
 
 		cudaEventRecord(stop, 0);
@@ -1200,8 +1278,8 @@ double computeparalleldc(vector < vector < long > > & graph,long n,long *outdeg,
 		total += elapsedTime;
 
 		for(i=pivot;i<limit;i++)
-		{   
-			{   
+		{
+			{
 				cudaMemcpy(cm, &i, sizeof(long), cudaMemcpyHostToDevice);
 
 				cudaEvent_t start, stop;
@@ -1211,7 +1289,7 @@ double computeparalleldc(vector < vector < long > > & graph,long n,long *outdeg,
 				cudaEventRecord(start, 0);
 
 				kernel4test1<<<1,1024>>>(cm, cmem, cgraph, ctemp, ccurrRank, crank, coutdeg, cmarked);
-				
+
 				cudaDeviceSynchronize();
 
 				cudaEventRecord(stop, 0);
@@ -1221,7 +1299,7 @@ double computeparalleldc(vector < vector < long > > & graph,long n,long *outdeg,
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-			}   
+			}
 		}
 
 		cudaMemcpy(currRank, ccurrRank, szz*sizeof(double) , cudaMemcpyDeviceToHost);
@@ -1243,25 +1321,25 @@ double computeparalleldc(vector < vector < long > > & graph,long n,long *outdeg,
 			}
 		}
 		if(iterations%20==0)
-		{   
+		{
 			for(i=0;i<limit;i++)
-			{   
+			{
 				if(!marked[i])
-				{   
+				{
 					if(fabs(prev[i]-curr[i]) < value )marked[i]=1;
 					else
 						prev[i]=curr[i];
-				}   
-			}   
+				}
+			}
 		}
 		error = anse;
 	}while(error > thres);
 	for(i=limit;i<n;i++)
-	{   
+	{
 		long node=mapit[i];
 		double val=powers[level[node]];
 		rank[node]=rank[redir[node]]*val+(1.0-val)/graph.size();
-	}   
+	}
 	cudaFree(cn);
 	cudaFree(cm);
 	cudaFree(cmem);
@@ -1350,15 +1428,15 @@ double computeparallelic(vector < vector < long > > & graph,long *parent,vector 
 	double randomp=(1-damp)/graph.size();
 	long limit=0;
 	for(i=0;i<n;i++)
-	{   
+	{
 		long node=mapit[i];
 		if(node==redir[node])
-		{   
+		{
 			long temp=mapit[limit];
 			mapit[limit]=node;
 			mapit[i]=temp;
 			limit++;
-		}   
+		}
 	}
 	long *mem = (long *)malloc(n*sizeof(long));
 	for(i=0;i<n;i++){
@@ -1390,16 +1468,16 @@ double computeparallelic(vector < vector < long > > & graph,long *parent,vector 
 	long pivot=0;
 	long thresh=MAX;
 	for(i=0;i<limit;i++)
-	{   
+	{
 		long node=mapit[i];
 		if(graph[node].size()<thresh)
-		{   
+		{
 			long temp=mapit[pivot];
 			mapit[pivot]=node;
 			mapit[i]=temp;
 			pivot++;
-		}   
-	}   
+		}
+	}
 
 	long *cn, *cm, *cmem, *coutdeg, *cparent, *ctemp, *cgraph;
 	double *crank;
@@ -1425,8 +1503,8 @@ double computeparallelic(vector < vector < long > > & graph,long *parent,vector 
 	cudaMemcpy(ctemp, temp, n*sizeof(long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cgraph, graphh, szz*sizeof(long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cparent, parent, nn*sizeof(long), cudaMemcpyHostToDevice);
-	do  
-	{   
+	do
+	{
 		error=0;
 		for(i=0;i<n;i++){
 			curr[i]=0;
@@ -1449,7 +1527,7 @@ double computeparallelic(vector < vector < long > > & graph,long *parent,vector 
 		cudaEventRecord(start, 0);
 
 		kernel1test<<<blockB,threadB>>>(cn, cmem, cgraph, ctemp, ccurrRank, crank, coutdeg, cparent);
-		
+
 		cudaDeviceSynchronize();
 
 		cudaEventRecord(stop, 0);
@@ -1461,8 +1539,8 @@ double computeparallelic(vector < vector < long > > & graph,long *parent,vector 
 		total += elapsedTime;
 
 		for(i=pivot;i<limit;i++)
-		{   
-			{   
+		{
+			{
 				cudaMemcpy(cm, &i, sizeof(long), cudaMemcpyHostToDevice);
 
 				cudaEvent_t start, stop;
@@ -1472,7 +1550,7 @@ double computeparallelic(vector < vector < long > > & graph,long *parent,vector 
 				cudaEventRecord(start, 0);
 
 				kernel1test1<<<1,1024>>>(cm, cmem, cgraph, ctemp, ccurrRank, crank, coutdeg, cparent);
-				
+
 				cudaDeviceSynchronize();
 
 				cudaEventRecord(stop, 0);
@@ -1482,8 +1560,8 @@ double computeparallelic(vector < vector < long > > & graph,long *parent,vector 
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-			}   
-		} 
+			}
+		}
 
 		cudaMemcpy(currRank, ccurrRank, szz*sizeof(double) , cudaMemcpyDeviceToHost);
 		for(i=0;i<n;i++){
@@ -1498,20 +1576,20 @@ double computeparallelic(vector < vector < long > > & graph,long *parent,vector 
 		}
 
 		for(i=0;i<limit;i++)
-		{   
+		{
 			{
 				rank[mapit[i]]=damp*curr[i]+randomp+initial[mapit[i]];
-			}   
+			}
 		}
 		iterations++;
 		error = anse;
 	}while(error > thres );
 	for(i=limit;i<n;i++)
-	{   
+	{
 		long node=mapit[i];
 		double val=powers[level[node]];
 		rank[node]=rank[redir[node]]*val+(1.0-val)/graph.size();
-	}   
+	}
 	for(i=0;i<left.size();i++)
 		rank[left[i]]=rank[parent[left[i]]];
 	cudaFree(cn);
@@ -1594,15 +1672,15 @@ double computeparallelidc(vector < vector < long > > & graph, long *parent,vecto
 	double randomp=(1-damp)/graph.size();
 	long limit=0;
 	for(i=0;i<n;i++)
-	{   
+	{
 		long node=mapit[i];
 		if(node==redir[node])
-		{   
+		{
 			long temp=mapit[limit];
 			mapit[limit]=node;
 			mapit[i]=temp;
 			limit++;
-		}   
+		}
 	}
 
 	long *mem = (long *)malloc(n*sizeof(long));
@@ -1631,16 +1709,16 @@ double computeparallelidc(vector < vector < long > > & graph, long *parent,vecto
 	long pivot=0;
 	long thresh=MAX;
 	for(i=0;i<limit;i++)
-	{   
+	{
 		long node=mapit[i];
 		if(graph[node].size()<thresh)
-		{   
+		{
 			long temp=mapit[pivot];
 			mapit[pivot]=node;
 			mapit[i]=temp;
 			pivot++;
-		}   
-	}   
+		}
+	}
 
 	long *cn, *cm, *cmem, *coutdeg, *cparent, *ctemp, *cgraph, *cmarked;
 	double *crank;
@@ -1668,8 +1746,8 @@ double computeparallelidc(vector < vector < long > > & graph, long *parent,vecto
 	cudaMemcpy(cgraph, graphh, szz*sizeof(long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cparent, parent, nn*sizeof(long), cudaMemcpyHostToDevice);
 
-	do  
-	{   
+	do
+	{
 		error=0;
 		for(i=0;i<n;i++){
 			curr[i]=0;
@@ -1677,7 +1755,7 @@ double computeparallelidc(vector < vector < long > > & graph, long *parent,vecto
 		for(i=0;i<szz;i++){
 			currRank[i]=0;
 		}
-		
+
 		cudaMemcpy(crank, rank, nn*sizeof(double), cudaMemcpyHostToDevice);
 		cudaMemcpy(cmarked, marked, n*sizeof(long), cudaMemcpyHostToDevice);
 		cudaMemcpy(ccurrRank, currRank, szz*sizeof(double), cudaMemcpyHostToDevice);
@@ -1693,7 +1771,7 @@ double computeparallelidc(vector < vector < long > > & graph, long *parent,vecto
 		cudaEventRecord(start, 0);
 
 		kernel2test<<<blockB,threadB>>>(cn, cmem, cgraph, ctemp, ccurrRank, crank, coutdeg, cparent, cmarked);
-		
+
 		cudaDeviceSynchronize();
 
 		cudaEventRecord(stop, 0);
@@ -1705,8 +1783,8 @@ double computeparallelidc(vector < vector < long > > & graph, long *parent,vecto
 		total += elapsedTime;
 
 		for(i=pivot;i<limit;i++)
-		{   
-			{   
+		{
+			{
 				cudaMemcpy(cm, &i, sizeof(long), cudaMemcpyHostToDevice);
 
 				cudaEvent_t start, stop;
@@ -1716,7 +1794,7 @@ double computeparallelidc(vector < vector < long > > & graph, long *parent,vecto
 				cudaEventRecord(start, 0);
 
 				kernel2test1<<<1,1024>>>(cm, cmem, cgraph, ctemp, ccurrRank, crank, coutdeg, cparent, cmarked);
-				
+
 				cudaDeviceSynchronize();
 
 				cudaEventRecord(stop, 0);
@@ -1726,8 +1804,8 @@ double computeparallelidc(vector < vector < long > > & graph, long *parent,vecto
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-			}   
-		} 
+			}
+		}
 		cudaMemcpy(currRank, ccurrRank, szz*sizeof(double) , cudaMemcpyDeviceToHost);
 		for(i=0;i<n;i++){
 			for(long kk=0;kk<graph[mapit[i]].size();kk++){
@@ -1741,32 +1819,32 @@ double computeparallelidc(vector < vector < long > > & graph, long *parent,vecto
 		iterations++;
 		for(i=0;i<limit;i++)
 		{
-			if(!marked[i])   
+			if(!marked[i])
 			{
 				rank[mapit[i]]=damp*curr[i]+randomp+initial[mapit[i]];
-			}   
+			}
 		}
 		if(iterations%20==0)
-		{   
+		{
 			for(i=0;i<limit;i++)
-			{   
+			{
 				if(!marked[i])
-				{   
+				{
 
 					if(fabs(prev[i]-curr[i]) < value )marked[i]=1;
 					else
 						prev[i]=curr[i];
-				}   
-			}   
-		}   
+				}
+			}
+		}
 		error = anse;
 	}while(error > thres);
 	for(i=limit;i<n;i++)
-	{   
+	{
 		long node=mapit[i];
 		double val=powers[level[node]];
 		rank[node]=rank[redir[node]]*val+(1.0-val)/graph.size();
-	}   
+	}
 	for(i=0;i<left.size();i++)
 		rank[left[i]]=rank[parent[left[i]]];
 	cudaFree(cn);
