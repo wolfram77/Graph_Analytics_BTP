@@ -619,7 +619,7 @@ void computerank(vector < vector < long > > & graph,long n,long *outdeg,vector <
 	curr.clear();
 }
 
-float computerank2(vector < vector < long long > > & rgraph,long long n,long long *outdeg,vector < long long > &  mapit,float *rank,float *initial)
+float computerank2(vector < vector < long > > & rgraph,long n,long *outdeg,vector < long > &  mapit,float *rank,float *initial)
 {
 	float damp=0.85;
 	float thres=1e-6;

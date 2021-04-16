@@ -2,6 +2,7 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
+#include <sstream>
 #include <fstream>
 #include <set>
 #include <map>
@@ -122,7 +123,7 @@ void topobfs(vector < vector < long > > & graph, long *order, long *visit){
 // for optdead, set optdead = 1 in main function
 long optchain=0, optdead=0, optident=0;
 
-int main(){
+int main(int argc, char **argv){
 	// start time
 	auto start = high_resolution_clock::now();
 	string ln;
