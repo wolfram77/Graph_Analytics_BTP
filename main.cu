@@ -11,14 +11,16 @@
 using namespace std;
 using namespace std::chrono;
 
+#define _MAX 100000
+
 // total time taken by kernel computations
 double total = 0.0;
 
-long long inc=0;
+long inc=0;
 
-// disjoint set union
+// disjolong set union
 // find the parent
-long long find(long long u,long long *parent){
+long find(long u,long *parent){
 	if(parent[u]<0) return u;
 	return parent[u]=find(parent[u],parent);
 }
@@ -26,9 +28,9 @@ long long find(long long u,long long *parent){
 // union by size 
 // parent[u] = -1 if parent
 // 		size if not parent (part of some set)
-long long unionit(long long u,long long v,long long *parent){
-	long long pu=find(u,parent);
-	long long pv=find(v,parent);
+long unionit(long u,long v,long *parent){
+	long pu=find(u,parent);
+	long pv=find(v,parent);
 	// same set
 	if(pu==pv) return 0;
 	if(-parent[pu]>-parent[pv]){   
@@ -47,9 +49,9 @@ long long unionit(long long u,long long v,long long *parent){
 // kosaraju's algorithm's part
 // nvisit = visited or not
 // dfs uses original graph
-void dfs(vector < vector < long long > > & graph,long long *visit,long long *nvisit,long long node){
+void dfs(vector < vector < long > > & graph,long *visit,long *nvisit,long node){
 	nvisit[node]=1; // visited
-	for(long long i=0;i<graph[node].size();i++)
+	for(long i=0;i<graph[node].size();i++)
 		if(nvisit[graph[node][i]]==-1) // if not visited
 			dfs(graph,visit,nvisit,graph[node][i]);
 	visit[inc++]=node; // enter the stack 
@@ -60,10 +62,10 @@ void dfs(vector < vector < long long > > & graph,long long *visit,long long *nvi
 // nvisit = nodes
 // rdfs uses graph with reverse edges
 // kosaraju's algorithm's part
-void rdfs(vector < vector < long long > > & graph,long long *nvisit,long long node,long long *component,long long com){
+void rdfs(vector < vector < long > > & graph,long *nvisit,long node,long *component,long com){
 	nvisit[node]=1; // visited
 	component[node]=com; // set component of the node
-	for(long long i=0;i<graph[node].size();i++)
+	for(long i=0;i<graph[node].size();i++)
 		if(nvisit[graph[node][i]]==-1) // if not visited
 			rdfs(graph,nvisit,graph[node][i],component,com);
 }
@@ -74,12 +76,12 @@ void rdfs(vector < vector < long long > > & graph,long long *nvisit,long long no
 //		      edges between component if there is an edge from one component to another
 // order = topological order = level by level nodes
 // visit = visited or not
-void topobfs(vector < vector < long long > > & graph, long long *order, long long *visit){
-	long long i,j;
-	queue < long long > line; // for bfs
-	memset(visit, -1, sizeof(long long)*graph.size());
-	long long indegree[graph.size()];
-	memset(indegree,0,graph.size()*sizeof(long long));
+void topobfs(vector < vector < long > > & graph, long *order, long *visit){
+	long i,j;
+	queue < long > line; // for bfs
+	memset(visit, -1, sizeof(long)*graph.size());
+	long indegree[graph.size()];
+	memset(indegree,0,graph.size()*sizeof(long));
 	// indegree of the component (number of components which have incoming edges to the component)
 	for(i=0;i<graph.size();i++){
 		for(j=0;j<graph[i].size();j++){
@@ -87,7 +89,7 @@ void topobfs(vector < vector < long long > > & graph, long long *order, long lon
 		}
 	}
 	for(i=0;i<graph.size();i++){
-		// add the nodes which have indegree = 0 into the line (queue)
+		// add the nodes which have indegree = 0 longo the line (queue)
 		if(!indegree[i]) {
 			line.push(i);
 			visit[i]=0;
@@ -97,7 +99,7 @@ void topobfs(vector < vector < long long > > & graph, long long *order, long lon
 	// bfs
 	// order = topological order of components
 	while(!line.empty()){
-		long long node=line.front();
+		long node=line.front();
 		line.pop();
 		order[inc++]=node;
 		for(i=0;i<graph[node].size();i++)
@@ -118,78 +120,80 @@ void topobfs(vector < vector < long long > > & graph, long long *order, long lon
 
 // computation for optchain and optident is included
 // for optdead, set optdead = 1 in main function
-long long optchain=0, optdead=0, optident=0;
+long optchain=0, optdead=0, optident=0;
 
 int main(){
 	// start time 
     auto start = high_resolution_clock::now();
 
 	ifstream fin; // input file
-	fin.open("input.txt");
+	fin.open("./../input.txt");
 	
 	ofstream fout; // output file
-	fout.open("output.txt");
+	fout.open("./../outputTest3.txt");
 	
 	// n = number of nodes
 	// m = number of edges
-	long long n,m;
+	long n,m;
 	fin >> n >> m;
 	
 	// graph = original graph
 	// rgraph = graph with reversed edges
 	// rcgraph = graph with edges within component
 	// rcwgraph = graph with edges (one component to another) (cross edges)
-	long long i,j;
-	vector < vector < long long > > graph(n), rgraph(n), rcgraph(n), rcwgraph(n);
+	long i,j;
+	vector < vector < long > > graph(n), rgraph(n), rcgraph(n), rcwgraph(n);
 
 	// outdegree of node
-	long long *outdeg = (long long *)malloc(n*sizeof(long long));
-	memset(outdeg,0,n*sizeof(long long));
+	long *outdeg = (long *)malloc(n*sizeof(long));
+	memset(outdeg,0,n*sizeof(long));
 
 	// below computation is to avoid any unusual node values
 	/*
 		for example,
 			n = 5
 			values of the nodes = 12 234 2312 123121 1232122121
-			we convert it into = 0 1 2 3 4 5
-		we first add values of the nodes into set
+			we convert it longo = 0 1 2 3 4 5
+		we first add values of the nodes longo set
 		assign each element of the set correspoing index values (map is used for this/ hash)
 	*/
 	// set to store the values of the nodes
-	set<long long> s;
-	// edges of the node (u,v) (u->v)
-	vector<pair<long long,long long>> edgess;
+	// set<long> s;
+	// // edges of the node (u,v) (u->v)
+	// vector<pair<long,long>> edgess;
 	
-	for(i=0;i<m;i++){
-		long long u,v;
-		fin >> u >> v; // input edges
-		s.insert(u); // insert node u into set
-		s.insert(v); // insert node v into set
-		edgess.push_back(make_pair(u,v)); // insert edge (u,v) into edges 
-	}
-	// hash to assign 0 to n-1 to nodes
-	map<long long,long long> hash;
-	long long cnt=0;
-	for(auto k:s){ // for every element of set
-		hash[k]=cnt++;
-	}
+	// for(i=0;i<m;i++){
+	// 	long u,v;
+	// 	fin >> u >> v; // input edges
+	// 	s.insert(u); // insert node u longo set
+	// 	s.insert(v); // insert node v longo set
+	// 	edgess.push_back(make_pair(u,v)); // insert edge (u,v) longo edges 
+	// }
+	// // hash to assign 0 to n-1 to nodes
+	// map<long,long> hash;
+	// long cnt=0;
+	// for(auto k:s){ // for every element of set
+	// 	hash[k]=cnt++;
+	// }
 
 	// create graph using hash values
 	for(i=0;i<m;i++){
-		long long u=hash[edgess[i].first], v = hash[edgess[i].second];
-		graph[u].push_back(v); // add edge into the graph
+		long u,v;
+		fin >> u >> v;
+		// long u=hash[edgess[i].first], v = hash[edgess[i].second];
+		graph[u].push_back(v); // add edge longo the graph
 		rgraph[v].push_back(u); // reversed edge
 		outdeg[u]++; // outdegree
 	}
 
-	long long *visit = (long long *)malloc(n*sizeof(long long));
-	memset(visit, -1, n*sizeof(long long));
+	long *visit = (long *)malloc(n*sizeof(long));
+	memset(visit, -1, n*sizeof(long));
 
-	long long *component = (long long *)malloc(n*sizeof(long long));
-	memset(component, -1, n*sizeof(long long));
+	long *component = (long *)malloc(n*sizeof(long));
+	memset(component, -1, n*sizeof(long));
 	
-	long long *nvisit = (long long *)malloc(n*sizeof(long long));
-	memset(nvisit, -1, n*sizeof(long long));
+	long *nvisit = (long *)malloc(n*sizeof(long));
+	memset(nvisit, -1, n*sizeof(long));
 	
 	// kosaraju's algorithm computation
 	for(i=0;i<n;i++){
@@ -198,10 +202,10 @@ int main(){
 		}
 	}
 
-	memset(nvisit,-1,n*sizeof(long long));
+	memset(nvisit,-1,n*sizeof(long));
 	
 	// component number
-	long long com=0;
+	long com=0;
 	for(i=n-1;i>=0;i--){
 		if(nvisit[visit[i]]==-1){ // if not visited
 			rdfs(rgraph,nvisit,visit[i],component,com); // scc computation
@@ -230,12 +234,12 @@ int main(){
 	// compgr = component graph
 	//		where nodes = Components
 	//		      edges between component if there is an edge from one component to another
-	vector < vector < long long > > members(com), compgr(com);
+	vector < vector < long > > members(com), compgr(com);
 	
 	// create component graph
 	for(i=0;i<n;i++){
 		for(j=0;j<graph[i].size();j++){
-			if(component[i]!=component[graph[i][j]]){ // if edge is cross edge == add edge into the component graph
+			if(component[i]!=component[graph[i][j]]){ // if edge is cross edge == add edge longo the component graph
 				// might be the case where multiple edges from one to another component
 				// can be ignored as it doesn't affect the results
 				compgr[component[i]].push_back(component[graph[i][j]]);
@@ -243,8 +247,8 @@ int main(){
 		}
 	}
 
-	long long *order = (long long *)malloc(com*sizeof(long long));
-	memset(nvisit,0,n*sizeof(long long));
+	long *order = (long *)malloc(com*sizeof(long));
+	memset(nvisit,0,n*sizeof(long));
 	
 	inc=0;
 	// order = topological order = level by level components
@@ -252,8 +256,8 @@ int main(){
 	topobfs(compgr,order,nvisit);
 	
 	// calculation to include the optident or not
-	long long *number = (long long *)malloc(n*sizeof(long long));
-	memset(number,0,n*sizeof(long long));
+	long *number = (long *)malloc(n*sizeof(long));
+	memset(number,0,n*sizeof(long));
 	
 	// number = number of nodes which have only one incoming edge from this node
 	for(i=0;i<n;i++){
@@ -263,9 +267,9 @@ int main(){
 	}
 
 	// equiperc = number of nodes which will save computation
-	long long equiperc=0;
+	long equiperc=0;
 	for(i=0;i<n;i++){
-		equiperc=equiperc+max((long long)0,number[i]-1);
+		equiperc=equiperc+max((long)0,number[i]-1);
 	}
 	
 	// saved computations nodes/total nodes
@@ -277,12 +281,12 @@ int main(){
 		optident=1;
 	
 	// parent2 is parent of chain if any
-	long long *parent2 = (long long *)malloc(n*sizeof(long long));
-	memset(parent2,-1,n*sizeof(long long));
+	long *parent2 = (long *)malloc(n*sizeof(long));
+	memset(parent2,-1,n*sizeof(long));
 	
 	// parent1 size of the chain
-	long long *parent1 = (long long *)malloc(n*sizeof(long long));
-	memset(parent1,-1,n*sizeof(long long));
+	long *parent1 = (long *)malloc(n*sizeof(long));
+	memset(parent1,-1,n*sizeof(long));
 	
 	for(i=0;i<n;i++){
 		if(rgraph[i].size()>1 || graph[i].size()>1 ) 
@@ -300,14 +304,14 @@ int main(){
 	}
 	
 	// redir = head of the chain
-	long long *redir = (long long *)malloc(n*sizeof(long long));
+	long *redir = (long *)malloc(n*sizeof(long));
 	for(i=0;i<n;i++){
 		redir[i]=i;
 	}
 
 	// levelz = level at which node appear in the node
-	long long *levelz = (long long *)malloc(n*sizeof(long long));
-	memset(levelz,0,n*sizeof(long long));
+	long *levelz = (long *)malloc(n*sizeof(long));
+	memset(levelz,0,n*sizeof(long));
 
 	// powers = used for pagerank computation of chain nodes
 	// powers[k] = (0.85)^k;
@@ -318,14 +322,14 @@ int main(){
 	}
 	
 	// vac = number of nodes in chain
-	long long vac=0;
+	long vac=0;
 	
 	for(i=0;i<n;i++)
 	{
 		if(rgraph[i].size()>1 || graph[i].size()>1 ) continue;
 		if(parent2[i]!=-1) continue;
-		long long node=i;
-		long long iterations=0;
+		long node=i;
+		long iterations=0;
 		while(graph[node].size())
 		{
 			node=graph[node][0];
@@ -347,51 +351,50 @@ int main(){
 	// edges = edge list
 	// rccw[i] = rcwgrah[i].size()
 	// tempg = prefix sum of crcw
-	long long *tempg = (long long *)malloc(n*sizeof(long long));
-	for(long long i1=0;i1<n;i1++){
+	long *tempg = (long *)malloc(n*sizeof(long));
+	for(long i1=0;i1<n;i1++){
 		if(i1) tempg[i1]=tempg[i1-1]+rcwgraph[i1-1].size();
 		else tempg[i1]=0;
 	}
-	long long szzz = tempg[n-1]+rcwgraph[n-1].size();
-	long long kkk=0;
-	long long *edges = (long long *)malloc(szzz*sizeof(long long));
-	for(long long i1=0;i1<n;i1++){
-		for(long long c:rcwgraph[i1]){
+	long szzz = tempg[n-1]+rcwgraph[n-1].size();
+	long kkk=0;
+	long *edges = (long *)malloc(szzz*sizeof(long));
+	for(long i1=0;i1<n;i1++){
+		for(long c:rcwgraph[i1]){
 			edges[kkk++]=c;
 		}
 	}
 
-	long long *rcw = (long long *)malloc(n*sizeof(long long));
-	for(long long i1=0;i1<n;i1++){
+	long *rcw = (long *)malloc(n*sizeof(long));
+	for(long i1=0;i1<n;i1++){
 		rcw[i1] = rcwgraph[i1].size();
 	}
 
-	long long *cstart, *cend, *corder, *cmemsz, *ctemp, *coutdeg,
+	long *cstart, *cend, *corder, *cmemsz, *ctemp, *coutdeg,
 					*cmembers, *ctempg, *cedges, *crcw;
-	double *cinitial,*crank;
+	double *crank;
 
-	cudaMalloc((void**)&cstart, sizeof(long long));
-	cudaMalloc((void**)&cend, sizeof(long long));
-	cudaMalloc((void**)&corder, com*sizeof(long long));
-	cudaMalloc((void**)&cmemsz, com*sizeof(long long));
-	cudaMalloc((void**)&ctemp, com*sizeof(long long));
-	cudaMalloc((void**)&crcw, n*sizeof(long long));
-	cudaMalloc((void**)&cinitial, n*sizeof(double));
+	cudaMalloc((void**)&cstart, sizeof(long));
+	cudaMalloc((void**)&cend, sizeof(long));
+	cudaMalloc((void**)&corder, com*sizeof(long));
+	cudaMalloc((void**)&cmemsz, com*sizeof(long));
+	cudaMalloc((void**)&ctemp, com*sizeof(long));
+	cudaMalloc((void**)&crcw, n*sizeof(long));
 	cudaMalloc((void**)&crank, n*sizeof(double));
-	cudaMalloc((void**)&coutdeg, n*sizeof(long long));
-	cudaMalloc((void**)&ctempg, n*sizeof(long long));
-	cudaMalloc((void**)&cedges, szzz*sizeof(long long));
+	cudaMalloc((void**)&coutdeg, n*sizeof(long));
+	cudaMalloc((void**)&ctempg, n*sizeof(long));
+	cudaMalloc((void**)&cedges, szzz*sizeof(long));
 
 	// corder = level by level ordering of components
-	cudaMemcpy(corder, order, com*sizeof(long long), cudaMemcpyHostToDevice);
+	cudaMemcpy(corder, order, com*sizeof(long), cudaMemcpyHostToDevice);
 	// ctempg = prefix sum of crcw
-	cudaMemcpy(ctempg, tempg, n*sizeof(long long), cudaMemcpyHostToDevice);
+	cudaMemcpy(ctempg, tempg, n*sizeof(long), cudaMemcpyHostToDevice);
 	// cedges = edge list of rcwgraph
-	cudaMemcpy(cedges, edges, szzz*sizeof(long long), cudaMemcpyHostToDevice);
+	cudaMemcpy(cedges, edges, szzz*sizeof(long), cudaMemcpyHostToDevice);
 	// crcw[i] = size of rcwgraph[i]
-	cudaMemcpy(crcw, rcw, n*sizeof(long long), cudaMemcpyHostToDevice);
+	cudaMemcpy(crcw, rcw, n*sizeof(long), cudaMemcpyHostToDevice);
 	// coutdeg = outdegree of nodes
-	cudaMemcpy(coutdeg, outdeg, n*sizeof(long long), cudaMemcpyHostToDevice);
+	cudaMemcpy(coutdeg, outdeg, n*sizeof(long), cudaMemcpyHostToDevice);
 
 	// rank = pageranks
 	double *rank = (double *)malloc(n*sizeof(double));
@@ -400,17 +403,25 @@ int main(){
 		rank[i]=1.0/n;
 	}
 
+	long check_size=szzz;
+	double *check_initial = (double *)malloc(check_size * sizeof(long));
+	double *ccheck_initial;
+	cudaMalloc((void**)&ccheck_initial, check_size*sizeof(double));
+	cout << check_size << "\n";
+	cudaMemcpy(ccheck_initial, check_initial, check_size*sizeof(double), cudaMemcpyHostToDevice);
+	cout << optident << " " << optchain << " " << optdead << "\n";
+
 	if(optident==1 && optchain==0 && optdead==0)
 	{
 		// parent/head of the identical nodes
-		long long *parent = (long long *)malloc(n*sizeof(long long));
+		long *parent = (long *)malloc(n*sizeof(long));
 		// identical nodes whose pagerank won't be calculated
 		// they would just be equated to pagerank of parent/head node
-		vector < vector < long long > > left(com);
+		vector < vector < long > > left(com);
 		for(i=0;i<n;i++)
 			parent[i]=i;
 		// hash values to find identical nodes
-		vector < vector <  pair  <  pair < long long , long long > , long long >  > > hvalues(n);
+		vector < vector <  pair  <  pair < long , long > , long >  > > hvalues(n);
 		for(i=0;i<n;i++)
 		{
 			if(rgraph[i].size()!=1 && rgraph[i].size()!=2) continue;
@@ -420,14 +431,14 @@ int main(){
 			}
 			else
 			{
-				long long val=max(rgraph[i][1]+1,rgraph[i][0]+1)*(n+1)+min(rgraph[i][0]+1,rgraph[i][1]+1);
+				long long val=(long long)max(rgraph[i][1]+1,rgraph[i][0]+1)*(n+1)+min(rgraph[i][0]+1,rgraph[i][1]+1);
 				hvalues[(val)%n].push_back(make_pair(make_pair(val,component[i]),i));
 			}
 		}
 
 		for(i=0;i<n;i++)
 			sort(hvalues[i].begin(),hvalues[i].end());
-		for(long long k=0;k<n;k++)
+		for(long k=0;k<n;k++)
 		{
 			for(i=0;i<hvalues[k].size();i++)
 			{
@@ -439,7 +450,7 @@ int main(){
 			}
 		}
 		hvalues.clear();
-		long long noo=0;
+		long noo=0;
 		for(i=0;i<n;i++){
 			if(parent[i]==i) 
 			{
@@ -454,59 +465,71 @@ int main(){
 			}
 		}
 		// par stores the first component number of every level 
-		vector < long long > par;
+		vector < long > par;
 		par.push_back(0);
 		for(i=0;i<com;i++)
 		{
-			long long j=i;
+			long j=i;
 			while(j<com && nvisit[order[j]]==nvisit[order[i]]) // component are on same level increment j
 				j++;
 			// now j is on the next level
 			par.push_back(j);
 			i=j-1;
 		}
-		long long thresh=100000; // to sort the components
+		long thresh=_MAX; // to sort the components
 		// initial array for storing the contribution of one component to another (pagerank of nodes)
-		double *initial = (double *)malloc(n*sizeof(double));
-		memset(initial,0,n*sizeof(double));
-		long long w;
+		double *initial = (double *)malloc(n * sizeof(double));
+		memset(initial,0,n * sizeof(double));
+		long w;
 
 		// memsz, mem, temp for CSR
 		// memsz = size of members
 		// temp = prefix sum of memsz
 		// mem = list of members
-		long long *memsz = (long long *)malloc(com*sizeof(long long));
-		long long *temp = (long long *)malloc(com*sizeof(long long));
-		long long szz=0;
-		for(long long i1=0;i1<com;i1++){
+		long *memsz = (long *)malloc(com*sizeof(long));
+		long *temp = (long *)malloc(com*sizeof(long));
+		long szz=0;
+		for(long i1=0;i1<com;i1++){
 			memsz[i1]=members[order[i1]].size();
 			szz+=members[order[i1]].size();
 		}
 
-		for(long long i1=0;i1<com;i1++){
+		for(long i1=0;i1<com;i1++){
 			if(i1) temp[i1]=temp[i1-1]+memsz[i1-1];
 			else temp[i1]=0;
 		}
 
-		long long kk=0;
-		long long *mem = (long long *)malloc(szz*sizeof(long long));
+		long kk=0;
+		long *mem = (long *)malloc(szz*sizeof(long));
 
-		for(long long i1=0;i1<com;i1++){
-			for(long long c:members[order[i1]]){
+		for(long i1=0;i1<com;i1++){
+			for(long c:members[order[i1]]){
 				mem[kk++]=c;
 			}
 		}
 
-		cudaMalloc((void**)&cmembers, szz*sizeof(long long));
+		// cout << "Check\n";
+
+		cudaMalloc((void**)&cmembers, szz*sizeof(long));
 		
-		cudaMemcpy(cmemsz, memsz, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(ctemp, temp, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(cmembers, mem, szz*sizeof(long long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmemsz, memsz, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(ctemp, temp, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmembers, mem, szz*sizeof(long), cudaMemcpyHostToDevice);
+
+		// cout << "Problem?\n";
+
+		
+
+		// cout << "Now?\n";
+		// cudaMemcpy(ccheck_pre, check_pre, 
+			// n * sizeof(long), cudaMemcpyHostToDevice);
+
+		cout << "Level: " << par.size() << " " << check_size << "\n";
 
 		for(i=0;i<par.size()-1;i++)
 		{
 			// [par[i], par[i+1]) components on the same level
-			long long pivot=par[i];
+			long pivot=par[i];
 			// [par[i], pivot) components with total edges > thresh
 			// [pivot, par[i+1]) components with total edges < thresh
 			
@@ -514,12 +537,12 @@ int main(){
 			for(w=par[i];w<par[i+1];w++)
 			{
 				// sum = total edges
-				long long sum=0;
+				long sum=0;
 				for(j=0;j<members[order[w]].size();j++)
 					sum=sum+rgraph[members[order[w]][j]].size();
 				if(sum>thresh)
 				{
-					long long temp=order[pivot];
+					long temp=order[pivot];
 					order[pivot]=order[w];
 					order[w]=temp;
 					pivot++;
@@ -531,9 +554,11 @@ int main(){
 			for(w=par[i];w<pivot;w++)
 			{
 				// cn = current component
-				long long *cn;
-				cudaMalloc((void**)&cn, sizeof(long long));
-				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
+				// cout << "Entering...\n";
+
+				long *cn;
+				cudaMalloc((void**)&cn, sizeof(long));
+				cudaMemcpy(cn, &w, sizeof(long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
 				dim3 blockB(32,32);
@@ -543,23 +568,12 @@ int main(){
 				cudaEventCreate(&stop);
 
 				cudaEventRecord(start, 0);
-				
-				// cn = current component
-				// cmemsz = member size
-				// cmembers = list of all members
-				// crcw = cross edge graph size
-				// cinitial = contribution of one node to another (different components) 
-				// crank = Pagerank
-				// cedges = edge list
-				// coutdeg = outdegree of the nodes
-				// corder = level by level topological component ordering
-				// ctemp = prefix sum of cmemsz
-				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
-								cedges, coutdeg, corder, ctemp, ctempg);
+
+				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, 
+													crcw, ccheck_initial, crank,
+														cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
-
 				cudaEventRecord(stop, 0);
 				cudaEventSynchronize(stop);
 				float elapsedTime;
@@ -567,17 +581,17 @@ int main(){
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 				cudaFree(cn);
 			}
 			
+			// cout << "Cleared phase 1\n";
+
 			// pivot to par[i+1] => Computation for all components at the same time (by one kernel)
 			if(pivot < par[i+1])
 			{
-				cudaMemcpy(cstart, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cend, &par[i+1], sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
+				cudaMemcpy(cstart, &pivot, sizeof(long), cudaMemcpyHostToDevice);
+				cudaMemcpy(cend, &par[i+1], sizeof(long), cudaMemcpyHostToDevice);
+				// cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
 				cudaMemcpy(crank, rank, n*sizeof(double), cudaMemcpyHostToDevice);
 
 				dim3 threadB(8,8,16);
@@ -601,7 +615,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -613,8 +627,22 @@ int main(){
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+				// cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
+
+			cudaMemcpy(check_initial, ccheck_initial, check_size * sizeof(double), cudaMemcpyDeviceToHost);
+			for(j=par[i];j<par[i+1];j++){
+				for(long kk=0;kk<members[order[j]].size();kk++){
+					long node = members[order[j]][kk];
+					for(long ll=0;ll<rcwgraph[node].size();ll++){
+						initial[node] += check_initial[tempg[node]+ll];
+					}
+				}
+			}
+
+			// cout << "Cleared phase 2\n";
+
+			// cout << "Not here\n";
 			
 			// Pagerank computation within the component
 			for(j=par[i];j<pivot;j++){
@@ -628,12 +656,12 @@ int main(){
 
 	if(optident==1 && optchain==0 && optdead==1)	
 	{
-		long long *parent = (long long *)malloc(n*sizeof(long long));
-		vector < vector < long long > > left(com);
+		long *parent = (long *)malloc(n*sizeof(long));
+		vector < vector < long > > left(com);
 		for(i=0;i<n;i++){
 			parent[i]=i;
 		}
-		vector < vector <  pair  <  pair < long long , long long > , long long >  > > hvalues(n);
+		vector < vector <  pair  <  pair < long , long > , long >  > > hvalues(n);
 		for(i=0;i<n;i++){
 			if(rgraph[i].size()!=1 && rgraph[i].size()!=2) 
 				continue;
@@ -641,14 +669,14 @@ int main(){
 				hvalues[(rgraph[i][0])%n].push_back(make_pair(make_pair(rgraph[i][0],component[i]),i));
 			}
 			else{
-				long long val=max(rgraph[i][1]+1,rgraph[i][0]+1)*(long long)(n+1)+min(rgraph[i][0]+1,rgraph[i][1]+1);
-				hvalues[(val)%(long long)n ].push_back(make_pair(make_pair(val,component[i]),i));
+				long val=max(rgraph[i][1]+1,rgraph[i][0]+1)*(long)(n+1)+min(rgraph[i][0]+1,rgraph[i][1]+1);
+				hvalues[(val)%(long)n ].push_back(make_pair(make_pair(val,component[i]),i));
 			}
 		}
 		for(i=0;i<n;i++){
 			sort(hvalues[i].begin(),hvalues[i].end());
 		}
-		for(long long k=0;k<n;k++){
+		for(long k=0;k<n;k++){
 			for(i=0;i<hvalues[k].size();i++){
 				for(j=i;j<hvalues[k].size() && hvalues[k][j].first==hvalues[k][i].first ;j++){
 					parent[hvalues[k][j].second]=hvalues[k][i].second;
@@ -657,7 +685,7 @@ int main(){
 			}
 		}
 		hvalues.clear();
-		long long noo=0;
+		long noo=0;
 		for(i=0;i<n;i++){
 			if(parent[i]==i){
 				members[component[i]].push_back(i);
@@ -668,10 +696,10 @@ int main(){
 			}
 		}
 
-		vector < long long > par;
+		vector < long > par;
 		par.push_back(0);
 		for(i=0;i<com;i++){
-			long long j=i;
+			long j=i;
 			while(j<com && nvisit[order[j]]==nvisit[order[i]]){
 				j++;
 			}
@@ -682,44 +710,44 @@ int main(){
 		double *initial = (double *)malloc(n*sizeof(double));
 		memset(initial,0,n*sizeof(double));
 
-		long long *memsz = (long long *)malloc(com*sizeof(long long));
-		long long *temp = (long long *)malloc(com*sizeof(long long));
-		long long szz=0;
-		for(long long i1=0;i1<com;i1++){
+		long *memsz = (long *)malloc(com*sizeof(long));
+		long *temp = (long *)malloc(com*sizeof(long));
+		long szz=0;
+		for(long i1=0;i1<com;i1++){
 			memsz[i1]=members[order[i1]].size();
 			szz+=members[order[i1]].size();
 		}
-		for(long long i1=0;i1<com;i1++){
+		for(long i1=0;i1<com;i1++){
 			if(i1) temp[i1]=temp[i1-1]+memsz[i1-1];
 			else temp[i1]=0;
 		}
-		long long kk=0;
-		long long *mem = (long long *)malloc(szz*sizeof(long long));
-		for(long long i1=0;i1<com;i1++){
-			for(long long c:members[order[i1]]){
+		long kk=0;
+		long *mem = (long *)malloc(szz*sizeof(long));
+		for(long i1=0;i1<com;i1++){
+			for(long c:members[order[i1]]){
 				mem[kk++]=c;
 			}
 		}
 
-		cudaMalloc((void**)&cmembers, szz*sizeof(long long));
+		cudaMalloc((void**)&cmembers, szz*sizeof(long));
 		
-		cudaMemcpy(cmemsz, memsz, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(ctemp, temp, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(cmembers, mem, szz*sizeof(long long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmemsz, memsz, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(ctemp, temp, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmembers, mem, szz*sizeof(long), cudaMemcpyHostToDevice);
 		
-		long long w;
-		long long thresh=100000;
+		long w;
+		long thresh=_MAX;
 
 		for(i=0;i<par.size()-1;i++){
-			long long pivot=par[i];
+			long pivot=par[i];
 			for(w=par[i];w<par[i+1];w++)
 			{
-				long long sum=0;
+				long sum=0;
 				for(j=0;j<members[order[w]].size();j++)
 					sum=sum+rgraph[members[order[w]][j]].size();
 				if(sum>thresh)
 				{
-					long long temp=order[pivot];
+					long temp=order[pivot];
 					order[pivot]=order[w];
 					order[w]=temp;
 					pivot++;
@@ -727,9 +755,9 @@ int main(){
 			}
 			for(w=par[i];w<pivot;w++)
 			{
-				long long *cn;
-				cudaMalloc((void**)&cn, sizeof(long long));
-				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
+				long *cn;
+				cudaMalloc((void**)&cn, sizeof(long));
+				cudaMemcpy(cn, &w, sizeof(long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
 				dim3 blockB(32,32);
@@ -751,7 +779,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -764,14 +792,12 @@ int main(){
 				cudaEventDestroy(stop);
 				total += elapsedTime;
 
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 				cudaFree(cn);
 			}
 
 			if(pivot < par[i+1]){
-				cudaMemcpy(cstart, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cend, &par[i+1], sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
+				cudaMemcpy(cstart, &pivot, sizeof(long), cudaMemcpyHostToDevice);
+				cudaMemcpy(cend, &par[i+1], sizeof(long), cudaMemcpyHostToDevice);
 				cudaMemcpy(crank, rank, n*sizeof(double), cudaMemcpyHostToDevice);
 
 				dim3 threadB(8,8,16);
@@ -795,7 +821,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -807,7 +833,15 @@ int main(){
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+			}
+			cudaMemcpy(check_initial, ccheck_initial, check_size * sizeof(double), cudaMemcpyDeviceToHost);
+			for(j=par[i];j<par[i+1];j++){
+				for(long kk=0;kk<members[order[j]].size();kk++){
+					long node = members[order[j]][kk];
+					for(long ll=0;ll<rcwgraph[node].size();ll++){
+						initial[node] += check_initial[tempg[node]+ll];
+					}
+				}
 			}
 			for(j=par[i];j<pivot;j++){
 				total += computeparallelid(rcgraph,parent,left[order[j]],members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
@@ -820,11 +854,11 @@ int main(){
 
 	if(optident==0 && optchain==0 && optdead==0)
 	{
-		vector < long long > par;
+		vector < long > par;
 		par.push_back(0);
 
 		for(i=0;i<com;i++){
-			long long j=i;
+			long j=i;
 			while(j<com && nvisit[order[j]]==nvisit[order[i]]){
 				j++;
 			}
@@ -839,45 +873,45 @@ int main(){
 			members[component[i]].push_back(i);
 		}
 
-		long long *memsz = (long long *)malloc(com*sizeof(long long));
-		long long *temp = (long long *)malloc(com*sizeof(long long));
-		long long szz=0;
+		long *memsz = (long *)malloc(com*sizeof(long));
+		long *temp = (long *)malloc(com*sizeof(long));
+		long szz=0;
 
-		for(long long i1=0;i1<com;i1++){
+		for(long i1=0;i1<com;i1++){
 			memsz[i1]=members[order[i1]].size();
 			szz+=members[order[i1]].size();
 		}
-		for(long long i1=0;i1<com;i1++){
+		for(long i1=0;i1<com;i1++){
 			if(i1) temp[i1]=temp[i1-1]+memsz[i1-1];
 			else temp[i1]=0;
 		}
-		long long kk=0;
-		long long *mem = (long long *)malloc(szz*sizeof(long long));
-		for(long long i1=0;i1<com;i1++){
-			for(long long c:members[order[i1]]){
+		long kk=0;
+		long *mem = (long *)malloc(szz*sizeof(long));
+		for(long i1=0;i1<com;i1++){
+			for(long c:members[order[i1]]){
 				mem[kk++]=c;
 			}
 		}
 
-		cudaMalloc((void**)&cmembers, szz*sizeof(long long));
+		cudaMalloc((void**)&cmembers, szz*sizeof(long));
 		
-		cudaMemcpy(cmemsz, memsz, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(ctemp, temp, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(cmembers, mem, szz*sizeof(long long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmemsz, memsz, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(ctemp, temp, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmembers, mem, szz*sizeof(long), cudaMemcpyHostToDevice);
 
-		long long w;
-		long long thresh=100000;
+		long w;
+		long thresh=_MAX;
 
 		for(i=0;i<par.size()-1;i++){
-			long long pivot=par[i];
+			long pivot=par[i];
 			for(w=par[i];w<par[i+1];w++)
 			{
-				long long sum=0;
+				long sum=0;
 				for(j=0;j<members[order[w]].size();j++)
 					sum=sum+rgraph[members[order[w]][j]].size();
 				if(sum>thresh)
 				{
-					long long temp=order[pivot];
+					long temp=order[pivot];
 					order[pivot]=order[w];
 					order[w]=temp;
 					pivot++;
@@ -885,9 +919,9 @@ int main(){
 			}
 			for(w=par[i];w<pivot;w++)
 			{
-				long long *cn;
-				cudaMalloc((void**)&cn, sizeof(long long));
-				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
+				long *cn;
+				cudaMalloc((void**)&cn, sizeof(long));
+				cudaMemcpy(cn, &w, sizeof(long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
 				dim3 blockB(32,32);
@@ -909,7 +943,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -922,14 +956,14 @@ int main(){
 				cudaEventDestroy(stop);
 				total += elapsedTime;
 
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+				// cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 				cudaFree(cn);
 			}
 
 			if(pivot < par[i+1]){
-				cudaMemcpy(cstart, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cend, &par[i+1], sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
+				cudaMemcpy(cstart, &pivot, sizeof(long), cudaMemcpyHostToDevice);
+				cudaMemcpy(cend, &par[i+1], sizeof(long), cudaMemcpyHostToDevice);
+				// cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
 				cudaMemcpy(crank, rank, n*sizeof(double), cudaMemcpyHostToDevice);
 
 				dim3 threadB(8,8,16);
@@ -953,7 +987,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -965,7 +999,16 @@ int main(){
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+				// cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+			}
+			cudaMemcpy(check_initial, ccheck_initial, check_size * sizeof(double), cudaMemcpyDeviceToHost);
+			for(j=par[i];j<par[i+1];j++){
+				for(long kk=0;kk<members[order[j]].size();kk++){
+					long node = members[order[j]][kk];
+					for(long ll=0;ll<rcwgraph[node].size();ll++){
+						initial[node] += check_initial[tempg[node]+ll];
+					}
+				}
 			}
 			for(j=par[i];j<pivot;j++){
 				total += computeparallel(rcgraph,members[order[j]].size(),outdeg,members[order[j]],rank,initial, n);
@@ -978,10 +1021,10 @@ int main(){
 
 	if(optident==0 && optchain==0 && optdead==1)
 	{
-		vector < long long > par;
+		vector < long > par;
 		par.push_back(0);
 		for(i=0;i<com;i++){
-			long long j=i;
+			long j=i;
 			while(j<com && nvisit[order[j]]==nvisit[order[i]]){
 				j++;
 			}
@@ -996,44 +1039,44 @@ int main(){
 			members[component[i]].push_back(i);
 		}
 
-		long long *memsz = (long long *)malloc(com*sizeof(long long));
-		long long *temp = (long long *)malloc(com*sizeof(long long));
-		long long szz=0;
-		for(long long i1=0;i1<com;i1++){
+		long *memsz = (long *)malloc(com*sizeof(long));
+		long *temp = (long *)malloc(com*sizeof(long));
+		long szz=0;
+		for(long i1=0;i1<com;i1++){
 			memsz[i1]=members[order[i1]].size();
 			szz+=members[order[i1]].size();
 		}
-		for(long long i1=0;i1<com;i1++){
+		for(long i1=0;i1<com;i1++){
 			if(i1) temp[i1]=temp[i1-1]+memsz[i1-1];
 			else temp[i1]=0;
 		}
-		long long kk=0;
-		long long *mem = (long long *)malloc(szz*sizeof(long long));
-		for(long long i1=0;i1<com;i1++){
-			for(long long c:members[order[i1]]){
+		long kk=0;
+		long *mem = (long *)malloc(szz*sizeof(long));
+		for(long i1=0;i1<com;i1++){
+			for(long c:members[order[i1]]){
 				mem[kk++]=c;
 			}
 		}
 		
-		cudaMalloc((void**)&cmembers, szz*sizeof(long long));
+		cudaMalloc((void**)&cmembers, szz*sizeof(long));
 		
-		cudaMemcpy(cmemsz, memsz, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(ctemp, temp, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(cmembers, mem, szz*sizeof(long long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmemsz, memsz, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(ctemp, temp, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmembers, mem, szz*sizeof(long), cudaMemcpyHostToDevice);
 		
-		long long w;
-		long long thresh=100000;
+		long w;
+		long thresh=_MAX;
 
 		for(i=0;i<par.size()-1;i++){
-			long long pivot=par[i];
+			long pivot=par[i];
 			for(w=par[i];w<par[i+1];w++)
 			{
-				long long sum=0;
+				long sum=0;
 				for(j=0;j<members[order[w]].size();j++)
 					sum=sum+rgraph[members[order[w]][j]].size();
 				if(sum>thresh)
 				{
-					long long temp=order[pivot];
+					long temp=order[pivot];
 					order[pivot]=order[w];
 					order[w]=temp;
 					pivot++;
@@ -1041,9 +1084,9 @@ int main(){
 			}
 			for(w=par[i];w<pivot;w++)
 			{
-				long long *cn;
-				cudaMalloc((void**)&cn, sizeof(long long));
-				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
+				long *cn;
+				cudaMalloc((void**)&cn, sizeof(long));
+				cudaMemcpy(cn, &w, sizeof(long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
 				dim3 blockB(32,32);
@@ -1065,7 +1108,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1078,14 +1121,14 @@ int main(){
 				cudaEventDestroy(stop);
 				total += elapsedTime;
 
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+				// cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 				cudaFree(cn);
 			}
 
 			if(pivot < par[i+1]){
-				cudaMemcpy(cstart, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cend, &par[i+1], sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
+				cudaMemcpy(cstart, &pivot, sizeof(long), cudaMemcpyHostToDevice);
+				cudaMemcpy(cend, &par[i+1], sizeof(long), cudaMemcpyHostToDevice);
+				// cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
 				cudaMemcpy(crank, rank, n*sizeof(double), cudaMemcpyHostToDevice);
 
 				dim3 threadB(8,8,16);
@@ -1109,7 +1152,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1121,7 +1164,16 @@ int main(){
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+				// cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+			}
+			cudaMemcpy(check_initial, ccheck_initial, check_size * sizeof(double), cudaMemcpyDeviceToHost);
+			for(j=par[i];j<par[i+1];j++){
+				for(long kk=0;kk<members[order[j]].size();kk++){
+					long node = members[order[j]][kk];
+					for(long ll=0;ll<rcwgraph[node].size();ll++){
+						initial[node] += check_initial[tempg[node]+ll];
+					}
+				}
 			}
 				
 			for(j=par[i];j<pivot;j++){
@@ -1135,10 +1187,10 @@ int main(){
 
 	if(optident==0 && optchain==1 && optdead==0)
 	{
-		vector < long long > par;
+		vector < long > par;
 		par.push_back(0);
 		for(i=0;i<com;i++){
-			long long j=i;
+			long j=i;
 			while(j<com && nvisit[order[j]]==nvisit[order[i]]){
 				j++;
 			}
@@ -1153,44 +1205,44 @@ int main(){
 		double *initial = (double *)malloc(n*sizeof(double));
 		memset(initial,0,n*sizeof(double));
 
-		long long *memsz = (long long *)malloc(com*sizeof(long long));
-		long long *temp = (long long *)malloc(com*sizeof(long long));
-		long long szz=0;
-		for(long long i1=0;i1<com;i1++){
+		long *memsz = (long *)malloc(com*sizeof(long));
+		long *temp = (long *)malloc(com*sizeof(long));
+		long szz=0;
+		for(long i1=0;i1<com;i1++){
 			memsz[i1]=members[order[i1]].size();
 			szz+=members[order[i1]].size();
 		}
-		for(long long i1=0;i1<com;i1++){
+		for(long i1=0;i1<com;i1++){
 			if(i1) temp[i1]=temp[i1-1]+memsz[i1-1];
 			else temp[i1]=0;
 		}
-		long long kk=0;
-		long long *mem = (long long *)malloc(szz*sizeof(long long));
-		for(long long i1=0;i1<com;i1++){
-			for(long long c:members[order[i1]]){
+		long kk=0;
+		long *mem = (long *)malloc(szz*sizeof(long));
+		for(long i1=0;i1<com;i1++){
+			for(long c:members[order[i1]]){
 				mem[kk++]=c;
 			}
 		}
 
-		cudaMalloc((void**)&cmembers, szz*sizeof(long long));
+		cudaMalloc((void**)&cmembers, szz*sizeof(long));
 		
-		cudaMemcpy(cmemsz, memsz, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(ctemp, temp, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(cmembers, mem, szz*sizeof(long long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmemsz, memsz, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(ctemp, temp, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmembers, mem, szz*sizeof(long), cudaMemcpyHostToDevice);
 		
-		long long w;
-		long long thresh=100000;
+		long w;
+		long thresh=_MAX;
 
 		for(i=0;i<par.size()-1;i++){
-			long long pivot=par[i];
+			long pivot=par[i];
 			for(w=par[i];w<par[i+1];w++)
 			{
-				long long sum=0;
+				long sum=0;
 				for(j=0;j<members[order[w]].size();j++)
 					sum=sum+rgraph[members[order[w]][j]].size();
 				if(sum>thresh)
 				{
-					long long temp=order[pivot];
+					long temp=order[pivot];
 					order[pivot]=order[w];
 					order[w]=temp;
 					pivot++;
@@ -1198,9 +1250,9 @@ int main(){
 			}
 			for(w=par[i];w<pivot;w++)
 			{
-				long long *cn;
-				cudaMalloc((void**)&cn, sizeof(long long));
-				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
+				long *cn;
+				cudaMalloc((void**)&cn, sizeof(long));
+				cudaMemcpy(cn, &w, sizeof(long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
 				dim3 blockB(32,32);
@@ -1222,7 +1274,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1235,14 +1287,14 @@ int main(){
 				cudaEventDestroy(stop);
 				total += elapsedTime;
 
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+				// cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 				cudaFree(cn);
 			}
 
 			if(pivot < par[i+1]){
-				cudaMemcpy(cstart, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cend, &par[i+1], sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
+				cudaMemcpy(cstart, &pivot, sizeof(long), cudaMemcpyHostToDevice);
+				cudaMemcpy(cend, &par[i+1], sizeof(long), cudaMemcpyHostToDevice);
+				// cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
 				cudaMemcpy(crank, rank, n*sizeof(double), cudaMemcpyHostToDevice);
 
 				dim3 threadB(8,8,16);
@@ -1266,7 +1318,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1278,7 +1330,16 @@ int main(){
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+				// cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+			}
+			cudaMemcpy(check_initial, ccheck_initial, check_size * sizeof(double), cudaMemcpyDeviceToHost);
+			for(j=par[i];j<par[i+1];j++){
+				for(long kk=0;kk<members[order[j]].size();kk++){
+					long node = members[order[j]][kk];
+					for(long ll=0;ll<rcwgraph[node].size();ll++){
+						initial[node] += check_initial[tempg[node]+ll];
+					}
+				}
 			}
 				
 			for(j=par[i];j<pivot;j++){
@@ -1292,10 +1353,10 @@ int main(){
 
 	if(optident==0 && optchain==1 && optdead==1)
 	{
-		vector < long long > par;
+		vector < long > par;
 		par.push_back(0);
 		for(i=0;i<com;i++){
-			long long j=i;
+			long j=i;
 			while(j<com && nvisit[order[j]]==nvisit[order[i]]){
 				j++;
 			}
@@ -1310,44 +1371,44 @@ int main(){
 		double *initial = (double *)malloc(n*sizeof(double));
 		memset(initial,0,n*sizeof(double));
 
-		long long *memsz = (long long *)malloc(com*sizeof(long long));
-		long long *temp = (long long *)malloc(com*sizeof(long long));
-		long long szz=0;
-		for(long long i1=0;i1<com;i1++){
+		long *memsz = (long *)malloc(com*sizeof(long));
+		long *temp = (long *)malloc(com*sizeof(long));
+		long szz=0;
+		for(long i1=0;i1<com;i1++){
 			memsz[i1]=members[order[i1]].size();
 			szz+=members[order[i1]].size();
 		}
-		for(long long i1=0;i1<com;i1++){
+		for(long i1=0;i1<com;i1++){
 			if(i1) temp[i1]=temp[i1-1]+memsz[i1-1];
 			else temp[i1]=0;
 		}
-		long long kk=0;
-		long long *mem = (long long *)malloc(szz*sizeof(long long));
-		for(long long i1=0;i1<com;i1++){
-			for(long long c:members[order[i1]]){
+		long kk=0;
+		long *mem = (long *)malloc(szz*sizeof(long));
+		for(long i1=0;i1<com;i1++){
+			for(long c:members[order[i1]]){
 				mem[kk++]=c;
 			}
 		}
 		
-		cudaMalloc((void**)&cmembers, szz*sizeof(long long));
+		cudaMalloc((void**)&cmembers, szz*sizeof(long));
 		
-		cudaMemcpy(cmemsz, memsz, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(ctemp, temp, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(cmembers, mem, szz*sizeof(long long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmemsz, memsz, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(ctemp, temp, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmembers, mem, szz*sizeof(long), cudaMemcpyHostToDevice);
 		
-		long long w;
-		long long thresh=100000;
+		long w;
+		long thresh=_MAX;
 
 		for(i=0;i<par.size()-1;i++){
-			long long pivot=par[i];
+			long pivot=par[i];
 			for(w=par[i];w<par[i+1];w++)
 			{
-				long long sum=0;
+				long sum=0;
 				for(j=0;j<members[order[w]].size();j++)
 					sum=sum+rgraph[members[order[w]][j]].size();
 				if(sum>thresh)
 				{
-					long long temp=order[pivot];
+					long temp=order[pivot];
 					order[pivot]=order[w];
 					order[w]=temp;
 					pivot++;
@@ -1355,9 +1416,9 @@ int main(){
 			}
 			for(w=par[i];w<pivot;w++)
 			{
-				long long *cn;
-				cudaMalloc((void**)&cn, sizeof(long long));
-				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
+				long *cn;
+				cudaMalloc((void**)&cn, sizeof(long));
+				cudaMemcpy(cn, &w, sizeof(long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
 				dim3 blockB(32,32);
@@ -1379,7 +1440,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1392,14 +1453,14 @@ int main(){
 				cudaEventDestroy(stop);
 				total += elapsedTime;
 
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+				// cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 				cudaFree(cn);
 			}
 
 			if(pivot < par[i+1]){
-				cudaMemcpy(cstart, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cend, &par[i+1], sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
+				cudaMemcpy(cstart, &pivot, sizeof(long), cudaMemcpyHostToDevice);
+				cudaMemcpy(cend, &par[i+1], sizeof(long), cudaMemcpyHostToDevice);
+				// cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
 				cudaMemcpy(crank, rank, n*sizeof(double), cudaMemcpyHostToDevice);
 
 				dim3 threadB(8,8,16);
@@ -1423,7 +1484,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1435,7 +1496,16 @@ int main(){
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+				// cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+			}
+			cudaMemcpy(check_initial, ccheck_initial, check_size * sizeof(double), cudaMemcpyDeviceToHost);
+			for(j=par[i];j<par[i+1];j++){
+				for(long kk=0;kk<members[order[j]].size();kk++){
+					long node = members[order[j]][kk];
+					for(long ll=0;ll<rcwgraph[node].size();ll++){
+						initial[node] += check_initial[tempg[node]+ll];
+					}
+				}
 			}
 			
 			for(j=par[i];j<pivot;j++){
@@ -1449,14 +1519,14 @@ int main(){
 	
 	if(optident==1 && optchain==1 && optdead==0)
 	{
-		long long parent[n];
-		vector < vector < long long > > left(com);
+		long parent[n];
+		vector < vector < long > > left(com);
 
 		for(i=0;i<n;i++){
 			parent[i]=i;
 		}
 
-		vector < vector <  pair  <  pair < long long , long long > , long long >  > > hvalues(n);
+		vector < vector <  pair  <  pair < long , long > , long >  > > hvalues(n);
 
 		for(i=0;i<n;i++){
 			if(rgraph[i].size()!=1 && rgraph[i].size()!=2) 
@@ -1465,8 +1535,8 @@ int main(){
 				hvalues[(rgraph[i][0])%n].push_back(make_pair(make_pair(rgraph[i][0],component[i]),i));
 			}
 			else{
-				long long val=max(rgraph[i][1]+1,rgraph[i][0]+1)*(long long)(n+1)+min(rgraph[i][0]+1,rgraph[i][1]+1);
-				hvalues[(val)%(long long)n ].push_back(make_pair(make_pair(val,component[i]),i));
+				long val=max(rgraph[i][1]+1,rgraph[i][0]+1)*(long)(n+1)+min(rgraph[i][0]+1,rgraph[i][1]+1);
+				hvalues[(val)%(long)n ].push_back(make_pair(make_pair(val,component[i]),i));
 			}
 		}
 
@@ -1474,7 +1544,7 @@ int main(){
 			sort(hvalues[i].begin(),hvalues[i].end());
 		}
 
-		for(long long k=0;k<n;k++){
+		for(long k=0;k<n;k++){
 			for(i=0;i<hvalues[k].size();i++){
 				for(j=i;j<hvalues[k].size() && hvalues[k][j].first==hvalues[k][i].first ;j++){
 					parent[hvalues[k][j].second]=hvalues[k][i].second;
@@ -1484,7 +1554,7 @@ int main(){
 		}
 
 		hvalues.clear();
-		long long noo=0;
+		long noo=0;
 		for(i=0;i<n;i++){
 			if(parent[i]==i) 
 			{
@@ -1497,10 +1567,10 @@ int main(){
 			}
 		}
 
-		vector < long long > par;
+		vector < long > par;
 		par.push_back(0);
 		for(i=0;i<com;i++){
-			long long j=i;
+			long j=i;
 			while(j<com && nvisit[order[j]]==nvisit[order[i]]){
 				j++;
 			}
@@ -1511,44 +1581,44 @@ int main(){
 		double *initial = (double *)malloc(n*sizeof(double));
 		memset(initial,0,n*sizeof(double));
 
-		long long *memsz = (long long *)malloc(com*sizeof(long long));
-		long long *temp = (long long *)malloc(com*sizeof(long long));
-		long long szz=0;
-		for(long long i1=0;i1<com;i1++){
+		long *memsz = (long *)malloc(com*sizeof(long));
+		long *temp = (long *)malloc(com*sizeof(long));
+		long szz=0;
+		for(long i1=0;i1<com;i1++){
 			memsz[i1]=members[order[i1]].size();
 			szz+=members[order[i1]].size();
 		}
-		for(long long i1=0;i1<com;i1++){
+		for(long i1=0;i1<com;i1++){
 			if(i1) temp[i1]=temp[i1-1]+memsz[i1-1];
 			else temp[i1]=0;
 		}
-		long long kk=0;
-		long long *mem = (long long *)malloc(szz*sizeof(long long));
-		for(long long i1=0;i1<com;i1++){
-			for(long long c:members[order[i1]]){
+		long kk=0;
+		long *mem = (long *)malloc(szz*sizeof(long));
+		for(long i1=0;i1<com;i1++){
+			for(long c:members[order[i1]]){
 				mem[kk++]=c;
 			}
 		}
 
-		cudaMalloc((void**)&cmembers, szz*sizeof(long long));
+		cudaMalloc((void**)&cmembers, szz*sizeof(long));
 		
-		cudaMemcpy(cmemsz, memsz, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(ctemp, temp, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(cmembers, mem, szz*sizeof(long long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmemsz, memsz, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(ctemp, temp, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmembers, mem, szz*sizeof(long), cudaMemcpyHostToDevice);
 		
-		long long w;
-		long long thresh=100000;
+		long w;
+		long thresh=_MAX;
 
 		for(i=0;i<par.size()-1;i++){
-			long long pivot=par[i];
+			long pivot=par[i];
 			for(w=par[i];w<par[i+1];w++)
 			{
-				long long sum=0;
+				long sum=0;
 				for(j=0;j<members[order[w]].size();j++)
 					sum=sum+rgraph[members[order[w]][j]].size();
 				if(sum>thresh)
 				{
-					long long temp=order[pivot];
+					long temp=order[pivot];
 					order[pivot]=order[w];
 					order[w]=temp;
 					pivot++;
@@ -1556,9 +1626,9 @@ int main(){
 			}
 			for(w=par[i];w<pivot;w++)
 			{
-				long long *cn;
-				cudaMalloc((void**)&cn, sizeof(long long));
-				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
+				long *cn;
+				cudaMalloc((void**)&cn, sizeof(long));
+				cudaMemcpy(cn, &w, sizeof(long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
 				dim3 blockB(32,32);
@@ -1580,7 +1650,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1593,14 +1663,14 @@ int main(){
 				cudaEventDestroy(stop);
 				total += elapsedTime;
 
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+				// cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 				cudaFree(cn);
 			}
 
 			if(pivot < par[i+1]){
-				cudaMemcpy(cstart, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cend, &par[i+1], sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
+				cudaMemcpy(cstart, &pivot, sizeof(long), cudaMemcpyHostToDevice);
+				cudaMemcpy(cend, &par[i+1], sizeof(long), cudaMemcpyHostToDevice);
+				// cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
 				cudaMemcpy(crank, rank, n*sizeof(double), cudaMemcpyHostToDevice);
 
 				dim3 threadB(8,8,16);
@@ -1624,7 +1694,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1636,7 +1706,7 @@ int main(){
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+				// cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
 
 			for(j=par[i];j<pivot;j++){
@@ -1650,12 +1720,12 @@ int main(){
 
 	if(optident==1 && optchain==1 && optdead==1)
 	{
-		long long *parent = (long long *)malloc(n*sizeof(long long));
-		vector < vector < long long > > left(com);
+		long *parent = (long *)malloc(n*sizeof(long));
+		vector < vector < long > > left(com);
 		for(i=0;i<n;i++){
 			parent[i]=i;
 		}
-		vector < vector <  pair  <  pair < long long , long long > , long long >  > > hvalues(n);
+		vector < vector <  pair  <  pair < long , long > , long >  > > hvalues(n);
 		
 		for(i=0;i<n;i++){
 			if(rgraph[i].size()!=1 && rgraph[i].size()!=2) continue;
@@ -1663,8 +1733,8 @@ int main(){
 				hvalues[(rgraph[i][0])%n].push_back(make_pair(make_pair(rgraph[i][0],component[i]),i));
 			}
 			else{
-				long long val=max(rgraph[i][1]+1,rgraph[i][0]+1)*(long long)(n+1)+min(rgraph[i][0]+1,rgraph[i][1]+1);
-				hvalues[(val)%(long long)n ].push_back(make_pair(make_pair(val,component[i]),i));
+				long val=max(rgraph[i][1]+1,rgraph[i][0]+1)*(long)(n+1)+min(rgraph[i][0]+1,rgraph[i][1]+1);
+				hvalues[(val)%(long)n ].push_back(make_pair(make_pair(val,component[i]),i));
 			}
 		}
 	
@@ -1672,7 +1742,7 @@ int main(){
 			sort(hvalues[i].begin(),hvalues[i].end());
 		}
 		
-		for(long long k=0;k<n;k++){
+		for(long k=0;k<n;k++){
 			for(i=0;i<hvalues[k].size();i++){
 				for(j=i;j<hvalues[k].size() && hvalues[k][j].first==hvalues[k][i].first ;j++){
 					parent[hvalues[k][j].second]=hvalues[k][i].second;
@@ -1682,7 +1752,7 @@ int main(){
 		}
 		hvalues.clear();
 
-		long long noo=0;
+		long noo=0;
 		for(i=0;i<n;i++){
 			if(parent[i]==i){
 				members[component[i]].push_back(i);
@@ -1693,10 +1763,10 @@ int main(){
 			}
 		}
 	
-		vector < long long > par;
+		vector < long > par;
 		par.push_back(0);
 		for(i=0;i<com;i++){
-			long long j=i;
+			long j=i;
 			while(j<com && nvisit[order[j]]==nvisit[order[i]]){
 				j++;
 			}
@@ -1707,44 +1777,44 @@ int main(){
 		double *initial = (double *)malloc(n*sizeof(double));
 		memset(initial,0,n*sizeof(double));
 
-		long long *memsz = (long long *)malloc(com*sizeof(long long));
-		long long *temp = (long long *)malloc(com*sizeof(long long));
-		long long szz=0;
-		for(long long i1=0;i1<com;i1++){
+		long *memsz = (long *)malloc(com*sizeof(long));
+		long *temp = (long *)malloc(com*sizeof(long));
+		long szz=0;
+		for(long i1=0;i1<com;i1++){
 			memsz[i1]=members[order[i1]].size();
 			szz+=members[order[i1]].size();
 		}
-		for(long long i1=0;i1<com;i1++){
+		for(long i1=0;i1<com;i1++){
 			if(i1) temp[i1]=temp[i1-1]+memsz[i1-1];
 			else temp[i1]=0;
 		}
-		long long kk=0;
-		long long *mem = (long long *)malloc(szz*sizeof(long long));
-		for(long long i1=0;i1<com;i1++){
-			for(long long c:members[order[i1]]){
+		long kk=0;
+		long *mem = (long *)malloc(szz*sizeof(long));
+		for(long i1=0;i1<com;i1++){
+			for(long c:members[order[i1]]){
 				mem[kk++]=c;
 			}
 		}
 		
-		cudaMalloc((void**)&cmembers, szz*sizeof(long long));
+		cudaMalloc((void**)&cmembers, szz*sizeof(long));
 		
-		cudaMemcpy(cmemsz, memsz, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(ctemp, temp, com*sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(cmembers, mem, szz*sizeof(long long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmemsz, memsz, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(ctemp, temp, com*sizeof(long), cudaMemcpyHostToDevice);
+		cudaMemcpy(cmembers, mem, szz*sizeof(long), cudaMemcpyHostToDevice);
 		
-		long long w;
-		long long thresh=100000;
+		long w;
+		long thresh=_MAX;
 
 		for(i=0;i<par.size()-1;i++){
-			long long pivot=par[i];
+			long pivot=par[i];
 			for(w=par[i];w<par[i+1];w++)
 			{
-				long long sum=0;
+				long sum=0;
 				for(j=0;j<members[order[w]].size();j++)
 					sum=sum+rgraph[members[order[w]][j]].size();
 				if(sum>thresh)
 				{
-					long long temp=order[pivot];
+					long temp=order[pivot];
 					order[pivot]=order[w];
 					order[w]=temp;
 					pivot++;
@@ -1752,9 +1822,9 @@ int main(){
 			}
 			for(w=par[i];w<pivot;w++)
 			{
-				long long *cn;
-				cudaMalloc((void**)&cn, sizeof(long long));
-				cudaMemcpy(cn, &w, sizeof(long long), cudaMemcpyHostToDevice);
+				long *cn;
+				cudaMalloc((void**)&cn, sizeof(long));
+				cudaMemcpy(cn, &w, sizeof(long), cudaMemcpyHostToDevice);
 
 				dim3 threadB(32,32);
 				dim3 blockB(32,32);
@@ -1776,7 +1846,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1789,14 +1859,14 @@ int main(){
 				cudaEventDestroy(stop);
 				total += elapsedTime;
 
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+				// cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 				cudaFree(cn);
 			}
 
 			if(pivot < par[i+1]){
-				cudaMemcpy(cstart, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cend, &par[i+1], sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
+				cudaMemcpy(cstart, &pivot, sizeof(long), cudaMemcpyHostToDevice);
+				cudaMemcpy(cend, &par[i+1], sizeof(long), cudaMemcpyHostToDevice);
+				// cudaMemcpy(cinitial, initial, n*sizeof(double), cudaMemcpyHostToDevice);
 				cudaMemcpy(crank, rank, n*sizeof(double), cudaMemcpyHostToDevice);
 
 				dim3 threadB(8,8,16);
@@ -1820,7 +1890,7 @@ int main(){
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, ccheck_initial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1832,7 +1902,7 @@ int main(){
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
 				total += elapsedTime;
-				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
+				// cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
 	
 			for(j=par[i];j<pivot;j++){
@@ -1870,8 +1940,6 @@ int main(){
     cudaFree(ctempg);
     cudaFree(cedges);
     cudaFree(crcw);
-    cudaFree(cinitial);
     cudaFree(crank);
-	
 	return 0;
 }
