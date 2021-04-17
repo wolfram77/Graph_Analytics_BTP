@@ -70,6 +70,7 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *cparent, *ctemp, *cgraph;
 	double *ccurr, *crank;
 
+	pivot=n;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -302,6 +303,7 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *cparent, *ctemp, *cgraph, *cmarked;;
 	double *ccurr, *crank;
 
+	pivot=n;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -541,6 +543,7 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *ctemp, *cgraph;
 	double *ccurr, *crank;
 
+	pivot=n;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -818,6 +821,7 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *ctemp, *cgraph, *cmarked;
 	double *ccurr, *crank;
 
+	pivot=n;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -1062,6 +1066,7 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *ctemp, *cgraph;
 	double *ccurr, *crank;
 
+	pivot=limit;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -1296,6 +1301,7 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *ctemp, *cgraph, *cmarked;
 	double *ccurr, *crank;
 
+	pivot=limit;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -1557,6 +1563,7 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *cparent, *ctemp, *cgraph;
 	double *ccurr, *crank;
 
+	pivot=limit;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -1800,6 +1807,7 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *cparent, *ctemp, *cgraph, *cmarked;
 	double *ccurr, *crank;
 
+	pivot=limit;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));

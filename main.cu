@@ -7,7 +7,7 @@
 #include <set>
 #include <map>
 #include <chrono>
-// #include "functions.cuh"
+#include "functions.cuh"
 
 using namespace std;
 using namespace std::chrono;
