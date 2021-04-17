@@ -18,6 +18,7 @@
 	for component 2, for all the nodes which have incoming edges from component 0,
 	we will initialize that nodes with contribution of the node from which edge is coming
 */
+#define BLOCK_DIM 1024
 __global__ void kerneltest(long long *cstart, long long *cend, long long *cmemsz, long long *cmember, long long *crcw,
 	double *cinitial, double *crank, long long *rcwgraph, long long *outdeg, long long *corder, long long *ctemp, long long *ctempg)
 {
@@ -82,17 +83,31 @@ __global__ void kerneltest1(long long *cstart, long long *cend, long long *cmems
 __global__ void kernel1test(long long *cn, long long *csize, long long *cmem, long long *cgraph,
 							long long *ctemp, double *ccurr, double *crank, long long *coutdeg, long long *cparent)
 {
+	__shared__ double cache[BLOCK_DIM];
 	// w = index of node
-	long long w = blockIdx.x*blockDim.x + threadIdx.x;
-	long long num_threads_x = blockDim.x * gridDim.x;
-	for(;w<(*cn);w+=num_threads_x){
+	long long w = blockIdx.x;
+	long long num_blocks_x = gridDim.x;
+	for(;w<(*cn);w+=num_blocks_x){
 		// size = size of adj. list of node at index w
 		long long size = csize[w];
-		long long j = blockIdx.y*blockDim.y + threadIdx.y;
-		long long num_threads_y = blockDim.y * gridDim.y;
-		for(;j<size;j+=num_threads_y){
+		long long j = threadIdx.y;
+		long long num_threads_x = blockDim.x;
+		cache[j] = 0;
+		for(;j<size;j+=num_threads_x){
 			long long node = cgraph[ctemp[w]+j];
 			atomicAdd(&ccurr[w], crank[cparent[node]]/coutdeg[node]);
+			cache[j] += crank[cparent[node]]/coutdeg[node];
+		}
+		__syncthreads();
+		long long limit_j = num_threads_x/2;
+		for(;limit_j;limit_j/=2){
+			if (j<limit_j){
+				cache[j] += cache[j+limit_j];
+			}
+			__syncthreads();
+		}
+		if(j==0){
+			ccurr[w] = cache[0];
 		}
 	}
 }
