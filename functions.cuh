@@ -134,10 +134,11 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 		// printf("[%07.3f ms] kernel1test()\n", elapsedTime);
 		total += elapsedTime;
 
-		cudaMemcpy(cm, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
-		cudaMemcpy(cn, &n, sizeof(long long), cudaMemcpyHostToDevice);
 
+		{
 			// pivot to n calculation (separate calculation for all the nodes as adj. list size is high)
+				cudaMemcpy(cm, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
+				cudaMemcpy(cn, &n, sizeof(long long), cudaMemcpyHostToDevice);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -159,6 +160,7 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 				// printf("[%07.3f ms] kernel1test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
+		}
 
 		double anse=0;
 		// anse = max error
@@ -352,6 +354,7 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 		// printf("[%07.3f ms] kernel2test()\n", elapsedTime);
 		total += elapsedTime;
 
+		{
 				cudaMemcpy(cm, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 				cudaMemcpy(cn, &n, sizeof(long long), cudaMemcpyHostToDevice);
 
@@ -374,6 +377,7 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 				// printf("[%07.3f ms] kernel2test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
+		}
 
 		double anse=0;
 		for(i=0;i<n;i++){
@@ -581,6 +585,7 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 		// printf("[%07.3f ms] kernel3test()\n", elapsedTime);
 		total += elapsedTime;
 
+		{
 				cudaMemcpy(cm, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 				cudaMemcpy(cm, &n, sizeof(long long), cudaMemcpyHostToDevice);
 
@@ -603,6 +608,7 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 				// printf("[%07.3f ms] kernel3test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
+		}
 
 		double anse=0;
 		for(i=0;i<n;i++){
@@ -853,6 +859,7 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 		// printf("[%07.3f ms] kernel4test()\n", elapsedTime);
 		total += elapsedTime;
 
+		{
 				cudaMemcpy(cm, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 				cudaMemcpy(cn, &n, sizeof(long long), cudaMemcpyHostToDevice);
 
@@ -875,6 +882,7 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 				// printf("[%07.3f ms] kernel4test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
+		}
 
 		double anse=0;
 		for(i=0;i<n;i++)
@@ -1089,6 +1097,7 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 		// printf("[%07.3f ms] kernel3test()\n", elapsedTime);
 		total += elapsedTime;
 
+		{
 				cudaMemcpy(cm, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 				cudaMemcpy(cn, &limit, sizeof(long long), cudaMemcpyHostToDevice);
 
@@ -1111,6 +1120,7 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 				// printf("[%07.3f ms] kernel3test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
+		}
 
 		double anse=0;
 		for(i=0;i<limit;i++){
@@ -1317,6 +1327,7 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 		// printf("[%07.3f ms] kernel4test()\n", elapsedTime);
 		total += elapsedTime;
 
+		{
 				cudaMemcpy(cm, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 				cudaMemcpy(cn, &limit, sizeof(long long), cudaMemcpyHostToDevice);
 
@@ -1339,6 +1350,7 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 				// printf("[%07.3f ms] kernel4test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
+		}
 
 		double anse=0;
 		for(i=0;i<limit;i++)
@@ -1572,6 +1584,7 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 		// printf("[%07.3f ms] kernel1test()\n", elapsedTime);
 		total += elapsedTime;
 
+		{
 				cudaMemcpy(cm, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 				cudaMemcpy(cn, &limit, sizeof(long long), cudaMemcpyHostToDevice);
 
@@ -1594,6 +1607,7 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 				// printf("[%07.3f ms] kernel1test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
+		}
 
 		double anse=0;
 		for(i=0;i<limit;i++){
@@ -1811,6 +1825,7 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 		// printf("[%07.3f ms] kernel2test()\n", elapsedTime);
 		total += elapsedTime;
 
+		{
 				cudaMemcpy(cm, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 				cudaMemcpy(cn, &limit, sizeof(long long), cudaMemcpyHostToDevice);
 
@@ -1832,6 +1847,7 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 				// printf("[%07.3f ms] kernel2test1()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
+		}
 
 		double anse=0;
 		for(i=0;i<limit;i++)
