@@ -100,19 +100,22 @@ __global__ void kernel1test(long long *cn, long long *csize, long long *cmem, lo
 }
 
 // node is fixed
-__global__ void kernel1test1(long long *cn, long long *csize, long long *cmem, long long *cgraph,
+__global__ void kernel1test1(long long *cm, long long *cn, long long *csize, long long *cmem, long long *cgraph,
 							long long *ctemp, double *ccurr, double *crank, long long *coutdeg, long long *cparent)
 {
 	// w = index of node
-	long long w = *cn;
+	long long w = (*cm)+blockIdx.x;
+	long long num_blocks_x = gridDim.x;
+	for(;w<(*cn);w+=num_blocks_x){
 	// size of adj. list of node at w
 	long long size = csize[w];
-	long long j = blockIdx.x*blockDim.x + threadIdx.x;
-	long long num_threads_x = blockDim.x * gridDim.x;
+	long long j = threadIdx.x;
+	long long num_threads_x = blockDim.x;
 	for(;j<size;j+=num_threads_x){
 		// edge (u -> w) u = node
 		long long node = cgraph[ctemp[w]+j];
 		atomicAdd(&ccurr[w], crank[cparent[node]]/coutdeg[node]);
+	}
 	}
 }
 
@@ -136,19 +139,22 @@ __global__ void kernel2test(long long *cn, long long *csize, long long *cmem, lo
 	}
 }
 
-__global__ void kernel2test1(long long *cn, long long *csize, long long *cmem, long long *cgraph,
+__global__ void kernel2test1(long long *cm, long long *cn, long long *csize, long long *cmem, long long *cgraph,
 							long long *ctemp, double *ccurr, double *crank, long long *coutdeg, long long *cparent, long long *cmarked)
 {
 
-	long long w = *cn;
+	long long w = (*cm)+blockIdx.x;
+	long long num_blocks_x = gridDim.x;
+	for(;w<(*cn);w+=num_blocks_x){
 	if(cmarked[w] == 0){
 		long long size = csize[w];
-		long long j = blockIdx.y*blockDim.y + threadIdx.y;
-		long long num_threads_y = blockDim.y * gridDim.y;
-		for(;j<size;j+=num_threads_y){
+		long long j = threadIdx.x;
+		long long num_threads_x = blockDim.x;
+		for(;j<size;j+=num_threads_x){
 			long long node = cgraph[ctemp[w]+j];
 			atomicAdd(&ccurr[w], crank[cparent[node]]/coutdeg[node]);
 		}
+	}
 	}
 }
 
@@ -171,16 +177,19 @@ __global__ void kernel3test(long long *cn, long long *csize, long long *cmem, lo
 }
 
 
-__global__ void kernel3test1(long long *cn, long long *csize, long long *cmem, long long *cgraph,
+__global__ void kernel3test1(long long *cm, long long *cn, long long *csize, long long *cmem, long long *cgraph,
 							long long *ctemp, double *ccurr, double *crank, long long *coutdeg)
 {
-	long long w = *cn;
+	long long w = (*cm)+blockIdx.x;
+	long long num_blocks_x = gridDim.x;
+	for(;w<(*cn);w+=num_blocks_x){
 	long long size = csize[w];
-	long long j = blockIdx.y*blockDim.y + threadIdx.y;
-	long long num_threads_y = blockDim.y * gridDim.y;
-	for(;j<size;j+=num_threads_y){
+	long long j = threadIdx.x;
+	long long num_threads_x = blockDim.x;
+	for(;j<size;j+=num_threads_x){
 		long long node = cgraph[ctemp[w]+j];
 		atomicAdd(&ccurr[w], crank[node]/coutdeg[node]);
+	}
 	}
 }
 
@@ -203,17 +212,20 @@ __global__ void kernel4test(long long *cn, long long *csize, long long *cmem, lo
 	}
 }
 
-__global__ void kernel4test1(long long *cn, long long *csize, long long *cmem, long long *cgraph,
+__global__ void kernel4test1(long long *cm, long long *cn, long long *csize, long long *cmem, long long *cgraph,
 							long long *ctemp, double *ccurr, double *crank, long long *coutdeg, long long *cmarked)
 {
-	long long w = *cn;
+	long long w = (*cm)+blockDim.x;
+	long long num_blocks_x = gridDim.x;
+	for(;w<(*cn);w+=num_blocks_x){
 	if(cmarked[w]==0){
 		long long size = csize[w];
-		long long j = blockIdx.y*blockDim.y + threadIdx.y;
-		long long num_threads_y = blockDim.y * gridDim.y;
-		for(;j<size;j+=num_threads_y){
+		long long j = threadIdx.x;
+		long long num_threads_x = blockDim.x;
+		for(;j<size;j+=num_threads_x){
 			long long node = cgraph[ctemp[w]+j];
 			atomicAdd(&ccurr[w], crank[node]/coutdeg[node]);
 		}
+	}
 	}
 }
