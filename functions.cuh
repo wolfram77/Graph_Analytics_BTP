@@ -70,7 +70,6 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *cparent, *ctemp, *cgraph;
 	double *ccurr, *crank;
 
-	pivot=n;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -82,7 +81,6 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 	cudaMalloc((void**)&ctemp, n*sizeof(long long));
 	cudaMalloc((void**)&cgraph, szz*sizeof(long long));
 
-	cudaMemcpy(cn, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cmem, mem, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(csize, sz, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(coutdeg, outdeg, nn*sizeof(long long), cudaMemcpyHostToDevice);
@@ -122,7 +120,7 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 		// ctemp = prefix sum of csize
 		// coutdeg = outdegree of nodes
 		// cparent = parents of identical nodes
-		kernel1test<<<blockB ,threadB>>>(cn, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent);
+		kernelIC<<<blockB ,threadB>>>(num_n, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent);
 
 		cudaDeviceSynchronize();
 
@@ -132,16 +130,19 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		// printf("[%07.3f ms] kernel1test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernelIC()\n", elapsedTime);
 		total += elapsedTime;
 
 		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
 
-		for(i=pivot;i<n;i++)
 		{
 			// pivot to n calculation (separate calculation for all the nodes as adj. list size is high)
-			{
-				cudaMemcpy(cm, &i, sizeof(long long), cudaMemcpyHostToDevice);
+				long long num_n=n-pivot;
+				long long num_threads=1024;
+				long long num_blocks_n=(num_n/1024)+1;
+				dim3 threadB(num_threads);
+				dim3 blockB(num_blocks_n);
+
 				cudaMemcpy(ccurr, curr, n*sizeof(double), cudaMemcpyHostToDevice);
 
 				cudaEvent_t start, stop;
@@ -151,7 +152,7 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 				cudaEventRecord(start, 0);
 
 				// cm = ith node
-				kernel1test1<<<4096,64>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent);
+				kernelICWide<<<blockB,threadB>>>(pivot, n, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent);
 
 				cudaDeviceSynchronize();
 
@@ -161,10 +162,9 @@ float computeparalleli(vector<vector<long long>> &graph, long long *parent, vect
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] kernel1test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernelICWide()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-			}
 		}
 
 		double anse=0;
@@ -303,7 +303,6 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *cparent, *ctemp, *cgraph, *cmarked;;
 	double *ccurr, *crank;
 
-	pivot=n;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -316,7 +315,6 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 	cudaMalloc((void**)&ccurr, n*sizeof(double));
 	cudaMalloc((void**)&crank, nn*sizeof(double));
 
-	cudaMemcpy(cn, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cmem, mem, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(csize, sz, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(coutdeg, outdeg, nn*sizeof(long long), cudaMemcpyHostToDevice);
@@ -347,7 +345,7 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 
 		cudaEventRecord(start, 0);
 
-		kernel2test<<<blockB,threadB>>>(cn, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent, cmarked);
+		kernelIDC<<<blockB,threadB>>>(num_n, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent, cmarked);
 
 		cudaDeviceSynchronize();
 
@@ -357,16 +355,15 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		// printf("[%07.3f ms] kernel2test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernelIDC()\n", elapsedTime);
 		total += elapsedTime;
 
-		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-
-		for(i=pivot;i<n;i++)
 		{
-			{
-				cudaMemcpy(cm, &i, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(ccurr, curr, n*sizeof(double), cudaMemcpyHostToDevice);
+				long long num_n=n-pivot;
+				long long num_threads=1024;
+				long long num_blocks_n=(num_n/1024)+1;
+				dim3 threadB(num_threads);
+				dim3 blockB(num_blocks_n);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -374,7 +371,7 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 
 				cudaEventRecord(start, 0);
 
-				kernel2test1<<<4096,64>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent, cmarked);
+				kernelIDCWide<<<blockB,threadB>>>(pivot, n, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent, cmarked);
 
 				cudaDeviceSynchronize();
 
@@ -384,10 +381,9 @@ float computeparallelid(vector < vector < long long > > & graph,long long *paren
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] kernel2test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernelIDCWide()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-			}
 		}
 
 		double anse=0;
@@ -543,7 +539,6 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *ctemp, *cgraph;
 	double *ccurr, *crank;
 
-	pivot=n;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -554,7 +549,6 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 	cudaMalloc((void**)&ccurr, n*sizeof(double));
 	cudaMalloc((void**)&crank, nn*sizeof(double));
 
-	cudaMemcpy(cn, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cmem, mem, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(csize, sz, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(coutdeg, outdeg, nn*sizeof(long long), cudaMemcpyHostToDevice);
@@ -584,7 +578,7 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 
 		cudaEventRecord(start, 0);
 
-		kernel3test<<<blockB,threadB>>>(cn, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg);
+		kernelC<<<blockB,threadB>>>(num_n, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg);
 
 		cudaDeviceSynchronize();
 
@@ -594,15 +588,15 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		// printf("[%07.3f ms] kernel3test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernelC()\n", elapsedTime);
 		total += elapsedTime;
 
-		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-		for(i=pivot;i<n;i++)
 		{
-			{
-				cudaMemcpy(cm, &i, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(ccurr, curr, n*sizeof(double), cudaMemcpyHostToDevice);
+				long long num_n=n-pivot;
+				long long num_threads=1024;
+				long long num_blocks_n=(num_n/1024)+1;
+				dim3 threadB(num_threads);
+				dim3 blockB(num_blocks_n);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -610,7 +604,7 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 
 				cudaEventRecord(start, 0);
 
-				kernel3test1<<<4096,64>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg);
+				kernelCWide<<<blockB,threadB>>>(pivot, n, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg);
 
 				cudaDeviceSynchronize();
 
@@ -620,10 +614,9 @@ float computeparallel(vector < vector < long long > > & graph,long long n,long l
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] kernel3test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernelCWide()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-			}
 		}
 
 		double anse=0;
@@ -821,7 +814,6 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *ctemp, *cgraph, *cmarked;
 	double *ccurr, *crank;
 
-	pivot=n;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -833,7 +825,6 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 	cudaMalloc((void**)&ccurr, n*sizeof(double));
 	cudaMalloc((void**)&crank, nn*sizeof(double));
 
-	cudaMemcpy(cn, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cmem, mem, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(csize, sz, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(coutdeg, outdeg, nn*sizeof(long long), cudaMemcpyHostToDevice);
@@ -863,7 +854,7 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 
 		cudaEventRecord(start, 0);
 
-		kernel4test<<<blockB,threadB>>>(cn, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cmarked);
+		kernelDC<<<blockB,threadB>>>(num_n, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cmarked);
 
 		cudaDeviceSynchronize();
 
@@ -873,16 +864,15 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		// printf("[%07.3f ms] kernel4test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernelDC()\n", elapsedTime);
 		total += elapsedTime;
 
-		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-
-		for(i=pivot;i<n;i++)
 		{
-			{
-				cudaMemcpy(cm, &i, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(ccurr, curr, n*sizeof(double), cudaMemcpyHostToDevice);
+				long long num_n=n-pivot;
+				long long num_threads=1024;
+				long long num_blocks_n=(num_n/1024)+1;
+				dim3 threadB(num_threads);
+				dim3 blockB(num_blocks_n);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -890,7 +880,7 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 
 				cudaEventRecord(start, 0);
 
-				kernel4test1<<<4096,64>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cmarked);
+				kernelDCWide<<<blockB,threadB>>>(pivot, n, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cmarked);
 
 				cudaDeviceSynchronize();
 
@@ -900,10 +890,9 @@ float computeparalleld(vector < vector < long long > > & graph,long long n,long 
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] kernel4test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernelDCWide()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-			}
 		}
 
 		double anse=0;
@@ -1066,7 +1055,6 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *ctemp, *cgraph;
 	double *ccurr, *crank;
 
-	pivot=limit;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -1077,7 +1065,6 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 	cudaMalloc((void**)&ccurr, n*sizeof(double));
 	cudaMalloc((void**)&crank, nn*sizeof(double));
 
-	cudaMemcpy(cn, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cmem, mem, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(csize, sz, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(coutdeg, outdeg, nn*sizeof(long long), cudaMemcpyHostToDevice);
@@ -1107,7 +1094,7 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 
 		cudaEventRecord(start, 0);
 
-		kernel3test<<<blockB,threadB>>>(cn, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg);
+		kernelC<<<blockB,threadB>>>(num_n, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg);
 
 		cudaDeviceSynchronize();
 
@@ -1117,16 +1104,15 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		// printf("[%07.3f ms] kernel3test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernelC()\n", elapsedTime);
 		total += elapsedTime;
 
-		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-
-		for(i=pivot;i<limit;i++)
 		{
-			{
-				cudaMemcpy(cm, &i, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(ccurr, curr, n*sizeof(double), cudaMemcpyHostToDevice);
+				long long num_n=limit-pivot;
+				long long num_threads=1024;
+				long long num_blocks_n=(num_n/1024)+1;
+				dim3 threadB(num_threads);
+				dim3 blockB(num_blocks_n);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -1134,7 +1120,7 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 
 				cudaEventRecord(start, 0);
 
-				kernel3test1<<<4096,64>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg);
+				kernelCWide<<<blockB,threadB>>>(pivot, limit, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg);
 
 				cudaDeviceSynchronize();
 
@@ -1144,10 +1130,9 @@ float computeparallelc(vector < vector < long long > > & graph,long long n,long 
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] kernel3test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernelCWide()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-			}
 		}
 
 		double anse=0;
@@ -1301,7 +1286,6 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *ctemp, *cgraph, *cmarked;
 	double *ccurr, *crank;
 
-	pivot=limit;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -1313,7 +1297,6 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 	cudaMalloc((void**)&ccurr, n*sizeof(double));
 	cudaMalloc((void**)&crank, nn*sizeof(double));
 
-	cudaMemcpy(cn, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cmem, mem, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(csize, sz, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(coutdeg, outdeg, nn*sizeof(long long), cudaMemcpyHostToDevice);
@@ -1343,7 +1326,7 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 
 		cudaEventRecord(start, 0);
 
-		kernel4test<<<blockB,threadB>>>(cn, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cmarked);
+		kernelDC<<<blockB,threadB>>>(num_n, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cmarked);
 
 		cudaDeviceSynchronize();
 
@@ -1353,16 +1336,15 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		// printf("[%07.3f ms] kernel4test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernelDC()\n", elapsedTime);
 		total += elapsedTime;
 
-		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-
-		for(i=pivot;i<limit;i++)
 		{
-			{
-				cudaMemcpy(cm, &i, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(ccurr, curr, n*sizeof(double), cudaMemcpyHostToDevice);
+				long long num_n=limit-pivot;
+				long long num_threads=1024;
+				long long num_blocks_n=(num_n/1024)+1;
+				dim3 threadB(num_threads);
+				dim3 blockB(num_blocks_n);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -1370,7 +1352,7 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 
 				cudaEventRecord(start, 0);
 
-				kernel4test1<<<4096,64>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cmarked);
+				kernelDCWide<<<blockB,threadB>>>(pivot, limit, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cmarked);
 
 				cudaDeviceSynchronize();
 
@@ -1380,10 +1362,9 @@ float computeparalleldc(vector < vector < long long > > & graph,long long n,long
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] kernel4test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernelDCWide()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-			}
 		}
 
 		double anse=0;
@@ -1563,7 +1544,6 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *cparent, *ctemp, *cgraph;
 	double *ccurr, *crank;
 
-	pivot=limit;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -1576,7 +1556,6 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 	cudaMalloc((void**)&crank, nn*sizeof(double));
 	cudaMalloc((void**)&cparent, nn*sizeof(long long));
 
-	cudaMemcpy(cn, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cmem, mem, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(csize, sz, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(coutdeg, outdeg, nn*sizeof(long long), cudaMemcpyHostToDevice);
@@ -1606,7 +1585,7 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 
 		cudaEventRecord(start, 0);
 
-		kernel1test<<<blockB,threadB>>>(cn, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent);
+		kernelIC<<<blockB,threadB>>>(num_n, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent);
 
 		cudaDeviceSynchronize();
 
@@ -1616,16 +1595,15 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		// printf("[%07.3f ms] kernel1test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernelIC()\n", elapsedTime);
 		total += elapsedTime;
 
-		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-
-		for(i=pivot;i<limit;i++)
 		{
-			{
-				cudaMemcpy(cm, &i, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(ccurr, curr, n*sizeof(double), cudaMemcpyHostToDevice);
+				long long num_n=limit-pivot;
+				long long num_threads=1024;
+				long long num_blocks_n=(num_n/1024)+1;
+				dim3 threadB(num_threads);
+				dim3 blockB(num_blocks_n);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -1633,7 +1611,7 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 
 				cudaEventRecord(start, 0);
 
-				kernel1test1<<<4096,64>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent);
+				kernelICWide<<<blockB,threadB>>>(pivot, limit, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent);
 
 				cudaDeviceSynchronize();
 
@@ -1643,10 +1621,9 @@ float computeparallelic(vector < vector < long long > > & graph,long long *paren
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] kernel1test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernelICWide()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-			}
 		}
 
 		double anse=0;
@@ -1807,7 +1784,6 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 	long long *cn, *cm, *cmem, *csize, *coutdeg, *cparent, *ctemp, *cgraph, *cmarked;
 	double *ccurr, *crank;
 
-	pivot=limit;
 	cudaMalloc((void**)&cn, sizeof(long long));
 	cudaMalloc((void**)&cm, sizeof(long long));
 	cudaMalloc((void**)&cmem, n*sizeof(long long));
@@ -1821,7 +1797,6 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 	cudaMalloc((void**)&crank, nn*sizeof(double));
 	cudaMalloc((void**)&cparent, nn*sizeof(long long));
 
-	cudaMemcpy(cn, &pivot, sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(cmem, mem, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(csize, sz, n*sizeof(long long), cudaMemcpyHostToDevice);
 	cudaMemcpy(coutdeg, outdeg, nn*sizeof(long long), cudaMemcpyHostToDevice);
@@ -1853,7 +1828,7 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 
 		cudaEventRecord(start, 0);
 
-		kernel2test<<<blockB,threadB>>>(cn, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent, cmarked);
+		kernelIDC<<<blockB,threadB>>>(num_n, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent, cmarked);
 
 		cudaDeviceSynchronize();
 
@@ -1863,16 +1838,15 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 		cudaEventElapsedTime(&elapsedTime, start, stop);
 		cudaEventDestroy(start);
 		cudaEventDestroy(stop);
-		// printf("[%07.3f ms] kernel2test()\n", elapsedTime);
+		// printf("[%07.3f ms] kernelIDC()\n", elapsedTime);
 		total += elapsedTime;
 
-		cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-
-		for(i=pivot;i<limit;i++)
 		{
-			{
-				cudaMemcpy(cm, &i, sizeof(long long), cudaMemcpyHostToDevice);
-				cudaMemcpy(ccurr, curr, n*sizeof(double), cudaMemcpyHostToDevice);
+				long long num_n=limit-pivot;
+				long long num_threads=1024;
+				long long num_blocks_n=(num_n/1024)+1;
+				dim3 threadB(num_threads);
+				dim3 blockB(num_blocks_n);
 
 				cudaEvent_t start, stop;
 				cudaEventCreate(&start);
@@ -1880,7 +1854,7 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 
 				cudaEventRecord(start, 0);
 
-				kernel2test1<<<4096,64>>>(cm, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent, cmarked);
+				kernelIDCWide<<<blockB,threadB>>>(pivot, limit, csize, cmem, cgraph, ctemp, ccurr, crank, coutdeg, cparent, cmarked);
 				cudaDeviceSynchronize();
 
 				cudaEventRecord(stop, 0);
@@ -1889,10 +1863,9 @@ float computeparallelidc(vector < vector < long long > > & graph, long long *par
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] kernel2test1()\n", elapsedTime);
+				// printf("[%07.3f ms] kernelIDCWide()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(curr, ccurr, n*sizeof(double), cudaMemcpyDeviceToHost);
-			}
 		}
 
 		double anse=0;

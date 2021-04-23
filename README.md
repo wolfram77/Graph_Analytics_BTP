@@ -19,7 +19,7 @@ add testcase into input.txt <br/>
 ```bash
 Loading graph /root/data/min2c.mtx ...
 order: 8 size: 12 {}
-kerneltest-3()
+kernelCross-3()
 computerank()
 computerank(): [1] error: 0.0708333 thres: 1e-10
 computerank(): [2] error: 0.0602083 thres: 1e-10
@@ -57,7 +57,7 @@ computerank(): [33] error: 2.32506e-10 thres: 1e-10
 computerank(): [34] error: 1.9763e-10 thres: 1e-10
 computerank(): [35] error: 1.67985e-10 thres: 1e-10
 computerank(): [36] error: 7.13937e-11 thres: 1e-10
-kerneltest-3()
+kernelCross-3()
 computerank()
 computerank(): [1] error: 0.053125 thres: 1e-10
 computerank(): [2] error: 0.0451562 thres: 1e-10
@@ -193,7 +193,7 @@ kernel time: 0.285184 ms
 ==96== Profiling application: ./a.out /root/data/min2c.mtx 1
 ==96== Profiling result:
             Type  Time(%)      Time     Calls       Avg       Min       Max  Name
- GPU activities:   87.18%  173.38us         2  86.687us  84.735us  88.640us  kerneltest(__int64*, __int64*, __int64*, __int64*, __int64*, double*, double*, __int64*, __int64*, __int64*, __int64*, __int64*)
+ GPU activities:   87.18%  173.38us         2  86.687us  84.735us  88.640us  kernelCross(__int64*, __int64*, __int64*, __int64*, __int64*, double*, double*, __int64*, __int64*, __int64*, __int64*, __int64*)
                    11.23%  22.336us        16  1.3960us  1.3440us  1.8240us  [CUDA memcpy HtoD]
                     1.59%  3.1680us         2  1.5840us  1.5680us  1.6000us  [CUDA memcpy DtoH]
       API calls:   99.53%  279.99ms        12  23.332ms  3.7130us  279.94ms  cudaMalloc

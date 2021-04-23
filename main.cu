@@ -562,7 +562,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCrossWide<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -573,7 +573,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCrossWide()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -595,7 +595,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				// cout << "kerneltest-1()\n";
+				// cout << "kernelCross-1()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -610,7 +610,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCross<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -621,7 +621,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCross()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -762,7 +762,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCrossWide<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -773,7 +773,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCrossWide()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -793,7 +793,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				// cout << "kerneltest-2()\n";
+				// cout << "kernelCross-2()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -808,7 +808,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCross<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -819,7 +819,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCross()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -924,7 +924,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCrossWide<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -935,7 +935,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCrossWide()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -955,7 +955,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				// cout << "kerneltest-3()\n";
+				// cout << "kernelCross-3()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -970,7 +970,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCross<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -981,7 +981,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCross()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1084,7 +1084,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCrossWide<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1095,7 +1095,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCrossWide()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1115,7 +1115,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				// cout << "kerneltest-4()\n";
+				// cout << "kernelCross-4()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -1130,7 +1130,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCross<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1141,7 +1141,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCross()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1245,7 +1245,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCrossWide<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1256,7 +1256,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCrossWide()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1276,7 +1276,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				// cout << "kerneltest-5()\n";
+				// cout << "kernelCross-5()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -1291,7 +1291,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCross<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1302,7 +1302,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCross()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1406,7 +1406,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCrossWide<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1417,7 +1417,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCrossWide()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1437,7 +1437,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				// cout << "kerneltest-6()\n";
+				// cout << "kernelCross-6()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -1452,7 +1452,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCross<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1463,7 +1463,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCross()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1611,7 +1611,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCrossWide<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1622,7 +1622,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCrossWide()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1642,7 +1642,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				// cout << "kerneltest-7()\n";
+				// cout << "kernelCross-7()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -1657,7 +1657,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCross<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1668,7 +1668,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCross()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
@@ -1811,7 +1811,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest1<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCrossWide<<<blockB,threadB>>>(cn, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1822,7 +1822,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest1()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCrossWide()\n", elapsedTime);
 				total += elapsedTime;
 
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
@@ -1842,7 +1842,7 @@ int main(int argc, char **argv) {
 				cudaEventCreate(&start);
 				cudaEventCreate(&stop);
 
-				// cout << "kerneltest-8()\n";
+				// cout << "kernelCross-8()\n";
 				cudaEventRecord(start, 0);
 
 				// cstart = pivot
@@ -1857,7 +1857,7 @@ int main(int argc, char **argv) {
 				// corder = level by level topological component ordering
 				// ctemp = prefix sum of cmemsz
 				// ctempg = prefix sum of crcw
-				kerneltest<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
+				kernelCross<<<blockB,threadB>>>(cstart, cend, cmemsz, cmembers, crcw, cinitial, crank,
 								cedges, coutdeg, corder, ctemp, ctempg);
 
 				cudaDeviceSynchronize();
@@ -1868,7 +1868,7 @@ int main(int argc, char **argv) {
 				cudaEventElapsedTime(&elapsedTime, start, stop);
 				cudaEventDestroy(start);
 				cudaEventDestroy(stop);
-				// printf("[%07.3f ms] main:kerneltest()\n", elapsedTime);
+				// printf("[%07.3f ms] main:kernelCross()\n", elapsedTime);
 				total += elapsedTime;
 				cudaMemcpy(initial, cinitial, n*sizeof(double), cudaMemcpyDeviceToHost);
 			}
